@@ -6,15 +6,24 @@ import Logo from "../components/Logo"
 export default function Login() {
   const { login } = useAuth()
   const navigate = useNavigate()
-  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [role, setRole] = useState<"USER" | "ADMIN">("USER")
+  const [error, setError] = useState("")
+  const [loading, setLoading] = useState(false)
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!name) return
-    login(role, name)
-    navigate(role === "ADMIN" ? "/admin" : "/")
+    setError("")
+    setLoading(true)
+
+    try {
+      await login(email, password)
+      navigate("/")
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Login failed")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -36,18 +45,24 @@ export default function Login() {
         {/* Form */}
         <form onSubmit={handleSubmit} className="glass-card p-8 space-y-6">
           <div className="space-y-4">
-            {/* Name Input */}
+            {error && (
+              <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-lg">
+                {error}
+              </div>
+            )}
+
+            {/* Email Input */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium mb-2 text-white/80">
-                Nama
+              <label htmlFor="email" className="block text-sm font-medium mb-2 text-white/80">
+                Email
               </label>
               <input
-                id="name"
-                type="text"
+                id="email"
+                type="email"
                 className="input-field"
-                placeholder="Masukkan nama"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                placeholder="your@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
@@ -61,33 +76,22 @@ export default function Login() {
                 id="password"
                 type="password"
                 className="input-field"
-                placeholder="Masukkan password"
+                placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                required
               />
-            </div>
-
-            {/* Role Select */}
-            <div>
-              <label htmlFor="role" className="block text-sm font-medium mb-2 text-white/80">
-                Login sebagai
-              </label>
-              <select
-                id="role"
-                className="input-field"
-                value={role}
-                onChange={(e) => setRole(e.target.value as "USER" | "ADMIN")}
-              >
-                <option value="USER">User</option>
-                <option value="ADMIN">Admin</option>
-              </select>
             </div>
           </div>
 
           {/* Submit Button */}
-          <button type="submit" className="w-full btn-primary">
-            Masuk
+          <button type="submit" disabled={loading} className="w-full btn-primary disabled:opacity-50">
+            {loading ? "Loading..." : "Masuk"}
           </button>
+          
+          <p className="text-center text-xs text-gray-500 mt-4">
+            Demo: admin@biggames.com / admin123 • demo@example.com / demo123
+          </p>
 
           {/* Register Link */}
           <div className="text-center">

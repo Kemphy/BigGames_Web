@@ -1,60 +1,104 @@
-import { ConsoleType } from "../types/booking"
-import { useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
+import type { Room } from "../types/api"
 
 type Props = {
-  consoleData: ConsoleType
+  room: Room
 }
 
-export default function ConsoleCard({ consoleData }: Props) {
-  const navigate = useNavigate()
+export default function ConsoleCard({ room }: Props) {
+  const consoleType = room.units[0]?.console_type || "PS5_PRO"
+  const imageUrl = room.images[0] || `https://images.unsplash.com/photo-1486401899868-0e435ed85128?w=800`
+
+  const formatPrice = (price: string) => {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0
+    }).format(parseFloat(price))
+  }
+
+  const getCategoryBadgeColor = (category: string) => {
+    switch (category) {
+      case "VIP":
+        return "bg-gradient-to-r from-yellow-500 to-orange-500"
+      case "SIMULATOR":
+        return "bg-gradient-to-r from-blue-500 to-cyan-500"
+      default:
+        return "bg-gradient-to-r from-purple-500 to-pink-500"
+    }
+  }
 
   return (
-    <div
-      onClick={() => navigate(`/booking/${consoleData.id}`)}
-      className="group cursor-pointer glass-card overflow-hidden hover:shadow-2xl hover:scale-[1.02] transition-all duration-300"
-    >
-      {/* Image */}
-      <div className="relative h-48 overflow-hidden">
-        <img
-          src={consoleData.image}
-          alt={consoleData.name}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-        
-        {/* Category Badge */}
-        <span className="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/80 backdrop-blur-sm">
-          {consoleData.category}
-        </span>
-      </div>
-
-      {/* Content */}
-      <div className="p-4">
-        <h3 className="text-lg font-bold text-white mb-2">
-          {consoleData.name}
-        </h3>
-        
-        <p className="text-sm text-white/60 mb-4 line-clamp-2">
-          {consoleData.description}
-        </p>
-
-        {/* Price */}
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-xs text-white/40">Mulai dari</p>
-            <p className="text-xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
-              Rp {consoleData.pricePerHour.toLocaleString()}
-              <span className="text-sm text-white/60 font-normal">/jam</span>
-            </p>
-          </div>
+    <Link to={`/booking/${room.id}`}>
+      <div className="group cursor-pointer glass-card overflow-hidden hover:shadow-2xl hover:scale-[1.02] transition-all duration-300">
+        {/* Image */}
+        <div className="relative h-48 overflow-hidden">
+          <img
+            src={imageUrl}
+            alt={room.name}
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
           
-          <button aria-label="Lihat detail" className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-cyan-500 flex items-center justify-center group-hover:shadow-lg group-hover:shadow-purple-500/50 transition-all">
-            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
+          {/* Category Badge */}
+          <span className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-semibold ${getCategoryBadgeColor(room.category)}`}>
+            {room.category}
+          </span>
+
+          {/* Rating */}
+          {room.avg_rating && (
+            <div className="absolute bottom-3 left-3 bg-black/50 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-1">
+              <span className="text-yellow-400">⭐</span>
+              <span className="text-white font-semibold">{room.avg_rating.toFixed(1)}</span>
+              <span className="text-gray-300 text-sm">({room.review_count})</span>
+            </div>
+          )}
+        </div>
+
+        {/* Content */}
+        <div className="p-4">
+          <h3 className="text-lg font-bold text-white mb-2">
+            {room.name}
+          </h3>
+          
+          <p className="text-sm text-white/60 mb-3 line-clamp-2">
+            {room.description}
+          </p>
+
+          <div className="flex items-center justify-between text-sm text-gray-300 mb-4">
+            <div className="flex items-center gap-2">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+              <span>{room.capacity} orang</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>{consoleType.replace("_", " ")}</span>
+            </div>
+          </div>
+
+          {/* Price */}
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs text-white/40">Mulai dari</p>
+              <p className="text-xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                {formatPrice(room.base_price_per_hour)}
+                <span className="text-sm text-white/60 font-normal">/jam</span>
+              </p>
+            </div>
+            
+            <button aria-label="Lihat detail" className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-cyan-500 flex items-center justify-center group-hover:shadow-lg group-hover:shadow-purple-500/50 transition-all">
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   )
 }

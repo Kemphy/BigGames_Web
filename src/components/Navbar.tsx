@@ -11,7 +11,7 @@ export default function Navbar() {
     { path: "/profile", label: "Profile", icon: "👤", requireAuth: true },
   ]
 
-  if (user?.role === "ADMIN") {
+  if (user?.role === "ADMIN" || user?.role === "FINANCE") {
     navItems.push({ path: "/admin", label: "Admin", icon: "⚙️" })
   }
 

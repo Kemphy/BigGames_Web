@@ -4,17 +4,38 @@ import { useAuth } from "../context/AuthContext"
 import Logo from "../components/Logo"
 
 export default function Register() {
-  const { login } = useAuth()
+  const { register } = useAuth()
   const navigate = useNavigate()
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [error, setError] = useState("")
+  const [loading, setLoading] = useState(false)
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!name || !email) return
-    login("USER", name)
-    navigate("/")
+    setError("")
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match")
+      return
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters")
+      return
+    }
+
+    setLoading(true)
+    try {
+      await register(email, password, name)
+      navigate("/")
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Registration failed")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -68,6 +89,12 @@ export default function Register() {
               />
             </div>
 
+            {error && (
+              <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-lg">
+                {error}
+              </div>
+            )}
+
             {/* Password Input */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium mb-2 text-white/80">
@@ -77,17 +104,35 @@ export default function Register() {
                 id="password"
                 type="password"
                 className="input-field"
-                placeholder="Buat password"
+                placeholder="Buat password (min 6 karakter)"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                minLength={6}
+              />
+            </div>
+
+            {/* Confirm Password Input */}
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium mb-2 text-white/80">
+                Konfirmasi Password
+              </label>
+              <input
+                id="confirmPassword"
+                type="password"
+                className="input-field"
+                placeholder="Ketik ulang password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                minLength={6}
               />
             </div>
           </div>
 
           {/* Submit Button */}
-          <button type="submit" className="w-full btn-primary">
-            Daftar
+          <button type="submit" disabled={loading} className="w-full btn-primary disabled:opacity-50">
+            {loading ? "Loading..." : "Daftar"}
           </button>
 
           {/* Login Link */}
