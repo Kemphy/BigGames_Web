@@ -1,10 +1,16 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'
-import './index.css'
+import React from "react"
+import ReactDOM from "react-dom/client"
+import App from "./App"
+import "./index.css"
+import { BookingProvider } from "./context/BookingContext"
+import { AuthProvider } from "./context/AuthContext"
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <App />
+    <AuthProvider>
+      <BookingProvider>
+        <App />
+      </BookingProvider>
+    </AuthProvider>
   </React.StrictMode>
 )
