@@ -6,8 +6,8 @@ export default function Navbar() {
   const location = useLocation()
   const { user } = useAuth()
 
-  const navItems = [
-    { path: "/", label: "Home", icon: "🏠" },
+  const navItems: Array<{ path: string; label: string; icon?: string; requireAuth?: boolean }> = [
+    { path: "/", label: "Home" },
     { path: "/profile", label: "Profile", icon: "👤", requireAuth: true },
   ]
 
@@ -42,7 +42,7 @@ export default function Navbar() {
                       : "text-slate-300 hover:text-white hover:bg-slate-700"
                   }`}
                 >
-                  <span className="mr-1">{item.icon}</span>
+                  {item.icon && <span className="mr-1">{item.icon}</span>}
                   <span className="hidden sm:inline">{item.label}</span>
                 </Link>
               )

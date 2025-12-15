@@ -1,3 +1,5 @@
+import Footer from "../components/Footer"
+
 export default function PromoPage() {
   const promos = [
     {
@@ -51,8 +53,8 @@ export default function PromoPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      <div className="container mx-auto px-4 py-16">
+    <div className="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <div className="container mx-auto px-4 py-16 min-h-[calc(100vh-4rem)]">
         <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 text-center">
           Promo & Diskon
         </h1>
@@ -108,35 +110,7 @@ export default function PromoPage() {
           ))}
         </div>
 
-        {/* How to Use Section */}
-        <div className="mt-16 max-w-4xl mx-auto bg-gradient-to-r from-purple-600/20 to-pink-600/20 backdrop-blur-md rounded-2xl p-8 border border-purple-500/30">
-          <h2 className="text-3xl font-bold text-white mb-6 text-center">
-            Cara Menggunakan Promo
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
-                1
-              </div>
-              <h3 className="text-white font-bold mb-2">Pilih Room</h3>
-              <p className="text-gray-300 text-sm">Pilih room dan atur waktu booking Anda</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
-                2
-              </div>
-              <h3 className="text-white font-bold mb-2">Masukkan Kode</h3>
-              <p className="text-gray-300 text-sm">Input kode promo di halaman booking</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
-                3
-              </div>
-              <h3 className="text-white font-bold mb-2">Nikmati Diskon</h3>
-              <p className="text-gray-300 text-sm">Harga akan otomatis terpotong diskon</p>
-            </div>
-          </div>
-        </div>
+
 
         {/* Loyalty Program */}
         <div className="mt-12 max-w-4xl mx-auto bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20">
@@ -158,6 +132,8 @@ export default function PromoPage() {
           </div>
         </div>
       </div>
+      
+      <Footer />
     </div>
   )
 }

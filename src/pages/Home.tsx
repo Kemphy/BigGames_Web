@@ -1,12 +1,22 @@
 import { useState, useEffect, useRef } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import ConsoleCard from "../components/ConsoleCard"
+import Footer from "../components/Footer"
 import { roomService } from "../services/room.service"
 import { aiService, type RecommendedRoom } from "../services/ai.service"
 import { useAuth } from "../context/AuthContext"
 import type { Room } from "../types/api"
 
 type Category = "VIP" | "REGULAR" | "SIMULATOR"
+
+interface PromoDetail {
+  title: string
+  discount: string
+  description: string
+  validUntil: string
+  code: string
+  terms: string[]
+}
 
 export default function Home() {
   const { user } = useAuth()
@@ -18,6 +28,7 @@ export default function Home() {
   const [category, setCategory] = useState<Category | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [selectedPromo, setSelectedPromo] = useState<PromoDetail | null>(null)
   
   const allRoomsRef = useRef<HTMLDivElement>(null)
   const carouselRef = useRef<HTMLDivElement>(null)
@@ -98,9 +109,9 @@ export default function Home() {
   ]
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="bg-slate-900">
       {/* Hero Section with Wave */}
-      <div className="relative bg-gradient-to-br from-slate-800 to-slate-900 overflow-hidden">
+      <div className="relative bg-gradient-to-br from-slate-800 to-slate-900 overflow-hidden py-12">
         <div className="absolute inset-0 opacity-20">
           <svg className="absolute bottom-0 w-full" viewBox="0 0 1440 320" preserveAspectRatio="none">
             <path fill="#1e293b" fillOpacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,144C960,149,1056,139,1152,122.7C1248,107,1344,85,1392,74.7L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
@@ -143,6 +154,7 @@ export default function Home() {
             {categories.map((cat) => (
               <button
                 key={cat.value}
+                type="button"
                 onClick={() => handleCategoryClick(cat.value)}
                 className={`flex flex-col items-center justify-center p-6 rounded-2xl transition-all ${
                   category === cat.value
@@ -193,13 +205,13 @@ export default function Home() {
                 const room: Room = {
                   id: rec.room_id,
                   name: rec.name,
-                  description: rec.reason,
+                  description: rec.description || rec.reason,
                   category: rec.category as Room['category'],
                   capacity: rec.capacity,
                   base_price_per_hour: String(rec.base_price_per_hour),
                   status: 'ACTIVE',
                   created_at: "",
-                  images: [rec.image_url || "https://placehold.co/400x300?text=No+Image"],
+                  images: rec.image_url ? [rec.image_url] : ["https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=500"],
                   units: []
                 }
                 return (
@@ -230,6 +242,7 @@ export default function Home() {
 
             {/* Navigation Arrows */}
             <button
+              type="button"
               onClick={() => setCurrentSlide((prev) => (prev === 0 ? aiRecommendations.slice(0, 10).length - 1 : prev - 1))}
               className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/70 backdrop-blur-sm rounded-full flex items-center justify-center text-white transition-colors z-10"
               aria-label="Previous slide"
@@ -239,6 +252,7 @@ export default function Home() {
               </svg>
             </button>
             <button
+              type="button"
               onClick={() => setCurrentSlide((prev) => (prev === aiRecommendations.slice(0, 10).length - 1 ? 0 : prev + 1))}
               className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/70 backdrop-blur-sm rounded-full flex items-center justify-center text-white transition-colors z-10"
               aria-label="Next slide"
@@ -253,6 +267,7 @@ export default function Home() {
               {aiRecommendations.slice(0, 10).map((_, index) => (
                 <button
                   key={index}
+                  type="button"
                   onClick={() => setCurrentSlide(index)}
                   className={`w-2 h-2 rounded-full transition-all ${
                     currentSlide === index 
@@ -272,13 +287,24 @@ export default function Home() {
             Jangan Sampai Ketinggalan!
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="relative bg-gradient-to-r from-cyan-500 to-blue-500 rounded-2xl p-8 overflow-hidden">
+            <div 
+              onClick={() => setSelectedPromo({
+                title: "First Timer Bonus",
+                discount: "50%",
+                description: "Diskon 50% untuk booking pertama Anda",
+                validUntil: "2 - 10 November 2025",
+                code: "FIRSTGAME",
+                terms: ["Minimal booking 2 jam", "Berlaku untuk semua room", "Hanya untuk user baru"]
+              })}
+              className="relative bg-gradient-to-r from-cyan-500 to-blue-500 rounded-2xl p-8 overflow-hidden cursor-pointer transform hover:scale-105 transition-all hover:shadow-2xl hover:shadow-cyan-500/50"
+            >
               <div className="relative z-10">
                 <p className="text-white text-sm mb-2">Privilage pengguna pertama</p>
                 <h3 className="text-white text-4xl font-bold mb-4">Diskon 50%!</h3>
                 <span className="inline-block bg-orange-500 text-white text-sm font-semibold px-4 py-2 rounded-lg">
                   2 - 10 November 2025
                 </span>
+                <p className="text-white/90 text-xs mt-4">Klik untuk detail lengkap →</p>
               </div>
               <div className="absolute right-0 top-0 w-48 h-48 bg-white opacity-10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
               <div className="absolute right-8 bottom-8 text-white opacity-20">
@@ -288,13 +314,24 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="relative bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl p-8 overflow-hidden">
+            <div 
+              onClick={() => setSelectedPromo({
+                title: "Loyal Member",
+                discount: "30%",
+                description: "Diskon 30% untuk member setia BigGames",
+                validUntil: "2 - 10 Desember 2025",
+                code: "LOYAL30",
+                terms: ["Minimal 3x booking sebelumnya", "Semua kategori room", "Tidak bisa digabung promo lain"]
+              })}
+              className="relative bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl p-8 overflow-hidden cursor-pointer transform hover:scale-105 transition-all hover:shadow-2xl hover:shadow-purple-500/50"
+            >
               <div className="relative z-10">
                 <p className="text-white text-sm mb-2">Member setia</p>
                 <h3 className="text-white text-4xl font-bold mb-4">Diskon 30%!</h3>
                 <span className="inline-block bg-orange-500 text-white text-sm font-semibold px-4 py-2 rounded-lg">
                   2 - 10 Desember 2025
                 </span>
+                <p className="text-white/90 text-xs mt-4">Klik untuk detail lengkap →</p>
               </div>
               <div className="absolute right-0 top-0 w-48 h-48 bg-white opacity-10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
               <div className="absolute right-8 bottom-8 text-white opacity-20">
@@ -304,16 +341,27 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="relative bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl p-8 overflow-hidden">
+            <div 
+              onClick={() => setSelectedPromo({
+                title: "Flash Sale",
+                discount: "40%",
+                description: "Diskon 40% untuk booking hari ini",
+                validUntil: "Hari ini saja!",
+                code: "FLASH40",
+                terms: ["Berlaku untuk hari ini", "Minimal booking 2 jam", "Stok terbatas", "First come first served"]
+              })}
+              className="relative bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl p-8 overflow-hidden cursor-pointer transform hover:scale-105 transition-all hover:shadow-2xl hover:shadow-orange-500/50"
+            >
               <div className="relative z-10">
                 <p className="text-white text-sm mb-2">Flash sale</p>
                 <h3 className="text-white text-4xl font-bold mb-4">Diskon 40%!</h3>
                 <span className="inline-block bg-yellow-500 text-white text-sm font-semibold px-4 py-2 rounded-lg">
                   Hari ini saja!
                 </span>
+                <p className="text-white/90 text-xs mt-4">Klik untuk detail lengkap →</p>
               </div>
               <div className="absolute right-0 top-0 w-48 h-48 bg-white opacity-10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
-              <div className="absolute right-8 bottom-8 text-white opacity-20">
+              <div className="absolute right-8 bottom-8 text-white opacity-20 animate-pulse">
                 <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
                 </svg>
@@ -321,6 +369,81 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* Promo Detail Modal */}
+        {selectedPromo && (
+          <div 
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+            onClick={() => setSelectedPromo(null)}
+          >
+            <div 
+              className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-8 max-w-md w-full border border-purple-500/30 shadow-2xl transform scale-100 animate-fade-in"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-start justify-between mb-6">
+                <div className="inline-block bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-full text-sm font-bold">
+                  {selectedPromo.discount} OFF
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSelectedPromo(null)}
+                  className="text-gray-400 hover:text-white transition-colors"
+                  aria-label="Close modal"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <h3 className="text-3xl font-bold text-white mb-4">{selectedPromo.title}</h3>
+              <p className="text-gray-300 mb-6">{selectedPromo.description}</p>
+
+              <div className="bg-black/30 rounded-lg p-4 mb-6 border border-purple-500/30">
+                <p className="text-xs text-gray-400 mb-1">Kode Promo:</p>
+                <div className="flex items-center justify-between">
+                  <p className="text-2xl font-mono font-bold text-purple-400">{selectedPromo.code}</p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(selectedPromo.code)
+                      alert("Kode promo berhasil disalin!")
+                    }}
+                    className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+                  >
+                    Salin
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 text-sm text-gray-400 mb-6">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span>Berlaku hingga: {selectedPromo.validUntil}</span>
+              </div>
+
+              <div className="border-t border-white/10 pt-4">
+                <p className="text-sm text-gray-400 mb-3 font-semibold">Syarat & Ketentuan:</p>
+                <ul className="space-y-2">
+                  {selectedPromo.terms.map((term, idx) => (
+                    <li key={idx} className="text-sm text-gray-300 flex items-start gap-2">
+                      <span className="text-purple-400 mt-1">✓</span>
+                      <span>{term}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <Link
+                to="/booking"
+                className="mt-6 w-full block text-center bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3 px-6 rounded-lg transition-all"
+              >
+                Gunakan Sekarang
+              </Link>
+            </div>
+          </div>
+        )}
 
         {/* All Rooms Section */}
         <section ref={allRoomsRef}>
@@ -397,6 +520,8 @@ export default function Home() {
           </div>
         </section>
       </div>
+      
+      <Footer />
     </div>
   )
 }
