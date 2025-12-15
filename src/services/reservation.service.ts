@@ -9,13 +9,6 @@ interface CreateReservationRequest {
   addon_ids?: string[]
 }
 
-interface ReservationsResponse {
-  reservations: Reservation[]
-  total: number
-  page: number
-  page_size: number
-}
-
 export const reservationService = {
   async createReservation(data: CreateReservationRequest): Promise<Reservation> {
     return apiClient.post<Reservation>('/api/reservations', data)
@@ -25,17 +18,13 @@ export const reservationService = {
     status?: string
     page?: number
     pageSize?: number
-  }): Promise<ReservationsResponse> {
-    const queryParams = new URLSearchParams()
-    if (params?.status) queryParams.set('status', params.status)
-    if (params?.page) queryParams.set('page', params.page.toString())
-    if (params?.pageSize) queryParams.set('pageSize', params.pageSize.toString())
-
-    const query = queryParams.toString()
-    return apiClient.get<ReservationsResponse>(`/api/reservations/my${query ? `?${query}` : ''}`)
+  }): Promise<Reservation[]> {
+    // Correct endpoint: /me not /my (verified with backend team)
+    // Backend returns array directly, not wrapped in object
+    return apiClient.get<Reservation[]>('/api/reservations/me', params)
   },
 
   async cancelReservation(id: string): Promise<{ message: string }> {
-    return apiClient.delete(`/api/reservations/${id}`)
+    return apiClient.put(`/api/reservations/${id}/cancel`, {})
   }
 }

@@ -50,7 +50,7 @@ export default function Register() {
             <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
               BIG GAMES
             </h1>
-            <p className="text-white/60 mt-2">Buat akun baru</p>
+            <p className="text-slate-400 mt-2">Buat akun baru</p>
           </div>
         </div>
 
@@ -59,7 +59,7 @@ export default function Register() {
           <div className="space-y-4">
             {/* Name Input */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium mb-2 text-white/80">
+              <label htmlFor="name" className="block text-sm font-medium mb-2 text-slate-200">
                 Nama Lengkap
               </label>
               <input
@@ -75,7 +75,7 @@ export default function Register() {
 
             {/* Email Input */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium mb-2 text-white/80">
+              <label htmlFor="email" className="block text-sm font-medium mb-2 text-slate-200">
                 Email
               </label>
               <input
@@ -97,7 +97,7 @@ export default function Register() {
 
             {/* Password Input */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium mb-2 text-white/80">
+              <label htmlFor="password" className="block text-sm font-medium mb-2 text-slate-200">
                 Password
               </label>
               <input
@@ -114,7 +114,7 @@ export default function Register() {
 
             {/* Confirm Password Input */}
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium mb-2 text-white/80">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium mb-2 text-slate-200">
                 Konfirmasi Password
               </label>
               <input
@@ -137,7 +137,7 @@ export default function Register() {
 
           {/* Login Link */}
           <div className="text-center">
-            <p className="text-sm text-white/60">
+            <p className="text-sm text-slate-400">
               Sudah punya akun?{" "}
               <Link to="/login" className="text-purple-400 hover:text-purple-300 font-semibold">
                 Masuk

@@ -17,8 +17,13 @@ export default function Login() {
     setLoading(true)
 
     try {
-      await login(email, password)
-      navigate("/")
+      const user = await login(email, password)
+      // Redirect admin/finance to admin dashboard
+      if (user.role === "ADMIN" || user.role === "FINANCE") {
+        navigate("/admin")
+      } else {
+        navigate("/")
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed")
     } finally {
@@ -38,7 +43,7 @@ export default function Login() {
             <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
               BIG GAMES
             </h1>
-            <p className="text-white/60 mt-2">Masuk ke akun Anda</p>
+            <p className="text-slate-400 mt-2">Masuk ke akun Anda</p>
           </div>
         </div>
 
@@ -53,7 +58,7 @@ export default function Login() {
 
             {/* Email Input */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium mb-2 text-white/80">
+              <label htmlFor="email" className="block text-sm font-medium mb-2 text-slate-200">
                 Email
               </label>
               <input
@@ -69,7 +74,7 @@ export default function Login() {
 
             {/* Password Input */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium mb-2 text-white/80">
+              <label htmlFor="password" className="block text-sm font-medium mb-2 text-slate-200">
                 Password
               </label>
               <input
@@ -95,7 +100,7 @@ export default function Login() {
 
           {/* Register Link */}
           <div className="text-center">
-            <p className="text-sm text-white/60">
+            <p className="text-sm text-slate-400">
               Belum punya akun?{" "}
               <Link to="/register" className="text-purple-400 hover:text-purple-300 font-semibold">
                 Daftar

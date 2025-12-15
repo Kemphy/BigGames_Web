@@ -1,4 +1,4 @@
-const BASE_URL = 'https://b6f3a5e65d0e.ngrok-free.app'
+const BASE_URL = 'https://2d4ae8dc10a3.ngrok-free.app'
 
 class ApiClient {
   private async request<T>(
@@ -30,8 +30,16 @@ class ApiClient {
     return response.json()
   }
 
-  async get<T>(endpoint: string): Promise<T> {
-    return this.request<T>(endpoint)
+  async get<T>(endpoint: string, params?: Record<string, any>): Promise<T> {
+    const queryString = params 
+      ? '?' + new URLSearchParams(Object.entries(params).reduce((acc, [key, value]) => {
+          if (value !== undefined && value !== null) {
+            acc[key] = String(value)
+          }
+          return acc
+        }, {} as Record<string, string>)).toString()
+      : ''
+    return this.request<T>(endpoint + queryString)
   }
 
   async post<T>(endpoint: string, data?: unknown): Promise<T> {
@@ -51,6 +59,13 @@ class ApiClient {
   async delete<T>(endpoint: string): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'DELETE',
+    })
+  }
+
+  async patch<T>(endpoint: string, data?: unknown): Promise<T> {
+    return this.request<T>(endpoint, {
+      method: 'PATCH',
+      body: data ? JSON.stringify(data) : undefined,
     })
   }
 }

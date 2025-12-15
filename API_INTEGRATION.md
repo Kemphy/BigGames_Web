@@ -2,7 +2,7 @@
 
 ## 🎯 Summary
 
-Frontend sudah terintegrasi dengan backend API di `https://b6f3a5e65d0e.ngrok-free.app`
+Frontend sudah terintegrasi dengan backend API di `https://2d4ae8dc10a3.ngrok-free.app`
 
 ## 📁 File Structure Baru
 
@@ -104,7 +104,7 @@ const reservation = await reservationService.createReservation({
 Base URL sudah diset di `src/services/api.ts`:
 
 ```typescript
-const BASE_URL = "https://b6f3a5e65d0e.ngrok-free.app";
+const BASE_URL = "https://2d4ae8dc10a3.ngrok-free.app";
 ```
 
 Headers otomatis include:
@@ -144,7 +144,7 @@ Cek apakah backend ngrok URL masih aktif. Update `BASE_URL` di `src/services/api
 
 ## 📚 Documentation
 
-Full API documentation: https://b6f3a5e65d0e.ngrok-free.app/docs
+Full API documentation: https://2d4ae8dc10a3.ngrok-free.app/docs
 
 ---
 

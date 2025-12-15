@@ -17,9 +17,9 @@ export interface Room {
   id: string
   name: string
   description: string
-  category: 'VIP' | 'REGULER' | 'SIMULATOR'
+  category: 'PS4' | 'PS5' | 'PC' | 'VIP' | 'REGULAR' | 'REGULER' | 'SIMULATOR' // Support both old and new categories
   capacity: number
-  base_price_per_hour: string
+  base_price_per_hour: string | number // Support both formats for compatibility
   status: 'ACTIVE' | 'INACTIVE'
   created_at: string
   images: string[]
@@ -62,7 +62,12 @@ export interface Reservation {
   id: string
   user_id: string
   room_id: string
-  room: Room
+  room?: Room  // Optional - backend might not always include this
+  user?: {
+    id: string
+    name: string
+    email: string
+  }
   start_time: string
   end_time: string
   duration_hours: string
@@ -78,6 +83,7 @@ export interface Payment {
   id: string
   status: 'WAITING_CONFIRMATION' | 'CONFIRMED' | 'REJECTED'
   amount: string
+  payment_proof_url?: string
   proof_url?: string
   reference?: string
 }

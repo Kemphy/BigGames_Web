@@ -10,16 +10,16 @@ export default function MainLayout({ children }: { children: ReactNode }) {
       </main>
       
       {/* Footer */}
-      <footer className="border-t border-white/10 mt-20">
+      <footer className="border-t border-slate-700 mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center space-y-2">
             <p className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
               BIG GAMES
             </p>
-            <p className="text-sm text-white/40">
+            <p className="text-sm text-slate-400">
               © 2025 BIG GAMES. Rental PlayStation Premium.
             </p>
-            <p className="text-xs text-white/30">
+            <p className="text-xs text-slate-500">
               Prototype Website - Demo Purpose Only
             </p>
           </div>
