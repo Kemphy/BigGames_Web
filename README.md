@@ -132,8 +132,8 @@ Pastikan Anda sudah menginstall:
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/kemphy/biggames-web.git
-cd biggames-web
+git clone https://github.com/Kemphy/BigGames_Web.git
+cd BigGames_Web
 ```
 
 ### 2. Install Dependensi
@@ -500,13 +500,13 @@ Didistribusikan di bawah Lisensi MIT. Lihat `LICENSE` untuk informasi lebih lanj
 
 ## 👥 Tim
 
-- **Developer** - [@kemphy](https://github.com/kemphy)
+- **Developer** - [@Kemphy](https://github.com/Kemphy)
 
 ## 📞 Kontak
 
 BigGames - info@biggames.com
 
-Link Proyek: [https://github.com/kemphy/biggames-web](https://github.com/kemphy/biggames-web)
+Link Proyek: [https://github.com/Kemphy/BigGames_Web](https://github.com/Kemphy/BigGames_Web)
 
 ## 🙏 Ucapan Terima Kasih
 
