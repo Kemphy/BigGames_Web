@@ -5,6 +5,7 @@ import { reservationService } from "../services/reservation.service"
 import { promoService } from "../services/promo.service"
 import { aiService } from "../services/ai.service"
 import { useAuth } from "../context/AuthContext"
+import Footer from "../components/Footer"
 import type { Room, RoomSlots, TimeSlot } from "../types/api"
 
 export default function BookingDetail() {
@@ -168,7 +169,7 @@ export default function BookingDetail() {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     )
   }
@@ -186,7 +187,28 @@ export default function BookingDetail() {
     )
   }
 
-  const imageUrl = room.images[0] || "https://images.unsplash.com/photo-1486401899868-0e435ed85128?w=800"
+  // Get appropriate image from assets folder
+  const getDefaultImage = (category: string, roomName: string) => {
+    const name = roomName.toLowerCase()
+    
+    if (category === "VIP") {
+      if (name.includes("vip 1") || name.includes("vip room 1")) return "/src/assets/VIP room 1.png"
+      if (name.includes("vip 2") || name.includes("vip room 2")) return "/src/assets/VIP room 2.png"
+      if (name.includes("vip 3") || name.includes("vip room 3")) return "/src/assets/VIP room 3.png"
+      return "/src/assets/VIP room 1.png"
+    }
+    
+    if (category === "SIMULATOR") {
+      return "/src/assets/Simulator room.png"
+    }
+    
+    // REGULAR category
+    if (name.includes("regular 1") || name.includes("regular room 1")) return "/src/assets/Reguler room 1.png"
+    if (name.includes("regular 2") || name.includes("regular room 2")) return "/src/assets/Reguler room 2.png"
+    return "/src/assets/Reguler room 1.png"
+  }
+
+  const imageUrl = room.images[0] || getDefaultImage(room.category, room.name)
   const subtotal = parseFloat(String(room.base_price_per_hour)) * selectedSlots.length
   const total = subtotal - promoDiscount
 
@@ -198,7 +220,7 @@ export default function BookingDetail() {
           <img src={imageUrl} alt={room.name} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-6">
-            <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/80 backdrop-blur-sm mb-2">
+            <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/80 backdrop-blur-sm mb-2">
               {room.category}
             </span>
             <h1 className="text-3xl font-bold text-white">{room.name}</h1>
@@ -207,12 +229,6 @@ export default function BookingDetail() {
               <span>Capacity: {room.capacity} people</span>
               <span>•</span>
               <span>{room.units[0]?.console_type.replace('_', ' ')}</span>
-              {room.avg_rating && (
-                <>
-                  <span>•</span>
-                  <span>⭐ {room.avg_rating.toFixed(1)} ({room.review_count} reviews)</span>
-                </>
-              )}
             </div>
           </div>
         </div>
@@ -243,7 +259,7 @@ export default function BookingDetail() {
             
             {loadingSlots ? (
               <div className="text-center py-8">
-                <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500"></div>
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
                 <p className="mt-2 text-white/60">Loading slots...</p>
               </div>
             ) : timeSlots?.slots && timeSlots.slots.length > 0 ? (
@@ -259,7 +275,7 @@ export default function BookingDetail() {
                       disabled={!isAvailable}
                       className={`p-3 rounded-lg font-medium transition-all text-sm ${
                         isSelected
-                          ? "bg-gradient-to-r from-purple-500 to-cyan-500 text-white shadow-lg"
+                          ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg"
                           : isAvailable
                           ? "bg-white/10 text-white hover:bg-white/20"
                           : "bg-white/5 text-white/30 cursor-not-allowed"
@@ -275,7 +291,7 @@ export default function BookingDetail() {
             )}
 
             {selectedSlots.length > 0 && (
-              <div className="mt-4 p-4 bg-purple-500/20 rounded-lg">
+              <div className="mt-4 p-4 bg-blue-500/20 rounded-lg">
                 <p className="text-sm text-white/80">
                   Selected: {selectedSlots[0].start_hour}:00 - {selectedSlots[selectedSlots.length - 1].end_hour}:00
                   ({selectedSlots.length} hour{selectedSlots.length > 1 ? 's' : ''})
@@ -352,7 +368,7 @@ export default function BookingDetail() {
               
               <div className="flex justify-between text-xl font-bold">
                 <span>Total</span>
-                <span className="bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
                   Rp {total.toLocaleString()}
                 </span>
               </div>
@@ -380,6 +396,7 @@ export default function BookingDetail() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   )
 }

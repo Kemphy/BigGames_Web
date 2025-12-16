@@ -36,6 +36,22 @@ class AdminService {
     return apiClient.put(`/api/admin/reservations/${reservationId}/status`, { status })
   }
 
+  async updateReservation(
+    reservationId: string,
+    data: {
+      room_id?: string
+      start_time?: string
+      end_time?: string
+      notes?: string
+      addons?: Array<{
+        addon_id: string
+        qty: number
+      }>
+    }
+  ): Promise<Reservation> {
+    return apiClient.put(`/api/admin/reservations/${reservationId}`, data)
+  }
+
   // ============ PAYMENTS ============
   
   async getAllPayments(): Promise<Payment[]> {
@@ -53,6 +69,18 @@ class AdminService {
 
   async rejectPayment(paymentId: string): Promise<Payment> {
     return apiClient.put(`/api/admin/payments/${paymentId}/reject`)
+  }
+
+  // ============ CANCEL & DELETE ============
+  
+  async cancelReservation(reservationId: string): Promise<{ message: string }> {
+    // Soft delete - changes status to CANCELLED
+    return apiClient.post(`/api/admin/reservations/${reservationId}/cancel`, {})
+  }
+
+  async deleteReservation(reservationId: string): Promise<{ message: string }> {
+    // Hard delete - permanently removes from database
+    return apiClient.delete(`/api/admin/reservations/${reservationId}`)
   }
 }
 

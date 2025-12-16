@@ -1,8 +1,22 @@
-export default function Logo({ className = "w-10 h-10" }: { className?: string }) {
+import logoCircle from '../assets/Logo1-Photoroom.png'
+import logoHorizontal from '../assets/logo panjang-Photoroom (1).png'
+
+export default function Logo({ className = "w-10 h-10", variant = "circle" }: { className?: string; variant?: "circle" | "horizontal" }) {
+  if (variant === "horizontal") {
+    return (
+      <img 
+        src={logoHorizontal} 
+        alt="BigGames Logo" 
+        className={className}
+      />
+    )
+  }
+  
   return (
-    <div className={`${className} rounded-xl bg-gradient-to-br from-purple-600 via-purple-500 to-cyan-500 flex items-center justify-center font-black text-white shadow-lg relative overflow-hidden`}>
-      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent" />
-      <span className="relative text-xl">BG</span>
-    </div>
+    <img 
+      src={logoCircle} 
+      alt="BigGames Logo" 
+      className={className}
+    />
   )
 }

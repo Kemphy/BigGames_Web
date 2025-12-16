@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { foodService } from "../services/food.service"
+import Footer from "../components/Footer"
 import type { MenuItem, CartItem } from "../types/food"
 
 export default function FoodMenu() {
@@ -73,6 +74,50 @@ export default function FoodMenu() {
     navigate("/food/checkout", { state: { cart } })
   }
 
+  // Get varied placeholder images - different for each item
+  const getPlaceholderImage = (item: MenuItem, index: number) => {
+    // Food category images
+    const foodImages = [
+      "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&h=300&fit=crop", // Burger
+      "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300&h=300&fit=crop", // Pizza
+      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&h=300&fit=crop", // Salad
+      "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=300&h=300&fit=crop", // Pancakes
+      "https://images.unsplash.com/photo-1606787366850-de6330128bfc?w=300&h=300&fit=crop", // Ramen
+      "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=300&h=300&fit=crop", // Pasta
+      "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=300&h=300&fit=crop", // Steak
+      "https://images.unsplash.com/photo-1562967914-608f82629710?w=300&h=300&fit=crop", // Sushi
+    ]
+    
+    // Drink/Beverage category images
+    const drinkImages = [
+      "https://images.unsplash.com/photo-1544145945-f90425340c7e?w=300&h=300&fit=crop", // Coffee
+      "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300&h=300&fit=crop", // Iced Coffee
+      "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=300&h=300&fit=crop", // Juice
+      "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=300&h=300&fit=crop", // Smoothie
+      "https://images.unsplash.com/photo-1610889556528-9a770e32642f?w=300&h=300&fit=crop", // Milk Tea
+      "https://images.unsplash.com/photo-1576098359692-63a1e8dc5e2d?w=300&h=300&fit=crop", // Iced Tea
+      "https://images.unsplash.com/photo-1582053433976-25c00369fc93?w=300&h=300&fit=crop", // Frappe
+    ]
+    
+    // Snack category images
+    const snackImages = [
+      "https://images.unsplash.com/photo-1599490659213-e2b9527bd087?w=300&h=300&fit=crop", // Fries
+      "https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=300&h=300&fit=crop", // Chicken Wings
+      "https://images.unsplash.com/photo-1562967916-ca8817ee80c0?w=300&h=300&fit=crop", // Nachos
+      "https://images.unsplash.com/photo-1560717845-968823efbee1?w=300&h=300&fit=crop", // Popcorn
+      "https://images.unsplash.com/photo-1613588555091-97ba5d0c7df2?w=300&h=300&fit=crop", // Onion Rings
+      "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=300&h=300&fit=crop", // Sandwich
+    ]
+    
+    if (item.category === "FOOD") {
+      return foodImages[index % foodImages.length]
+    } else if (item.category === "DRINK" || item.category === "BEVERAGE") {
+      return drinkImages[index % drinkImages.length]
+    } else {
+      return snackImages[index % snackImages.length]
+    }
+  }
+
   const categories = ["ALL", "FOOD", "BEVERAGE", "SNACK"]
 
   return (
@@ -80,7 +125,7 @@ export default function FoodMenu() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Today's Promo</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Today's Menu</h1>
           <p className="text-slate-400">Order makanan & minuman untuk ruangan Anda</p>
         </div>
 
@@ -123,28 +168,58 @@ export default function FoodMenu() {
 
         {/* Menu Grid */}
         {loading ? (
-          <div className="text-center py-20">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500"></div>
-            <p className="mt-4 text-slate-400">Loading menu...</p>
+          <div className="space-y-4">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="bg-slate-800 rounded-2xl p-4 flex items-center gap-4 border border-slate-700 animate-pulse">
+                <div className="w-24 h-24 bg-slate-700 rounded-xl"></div>
+                <div className="flex-1 space-y-3">
+                  <div className="h-5 bg-slate-700 rounded w-3/4"></div>
+                  <div className="h-4 bg-slate-700 rounded w-full"></div>
+                  <div className="h-6 bg-slate-700 rounded w-1/4"></div>
+                </div>
+                <div className="w-10 h-10 bg-slate-700 rounded-lg"></div>
+              </div>
+            ))}
           </div>
         ) : (
           <div className="space-y-4">
-            {filteredItems.map((item) => {
+            {filteredItems.map((item, index) => {
               const inCart = cart.find(i => i.menu_item.id === item.id)
               return (
-                <div key={item.id} className="bg-slate-800 rounded-2xl p-4 flex items-center gap-4 hover:bg-slate-750 transition-colors">
+                <div key={item.id} className="bg-slate-800 rounded-2xl p-4 flex items-center gap-4 hover:bg-slate-750 transition-colors border border-slate-700">
                   {/* Image */}
-                  <img 
-                    src={item.image_url || "https://placehold.co/120?text=No+Image"} 
-                    alt={item.name}
-                    className="w-24 h-24 rounded-xl object-cover"
-                  />
+                  <div className="relative w-24 h-24 flex-shrink-0">
+                    <img 
+                      src={item.image_url || getPlaceholderImage(item, index)} 
+                      alt={item.name}
+                      className="w-full h-full rounded-xl object-cover shadow-lg"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement
+                        target.src = getPlaceholderImage(item, index)
+                      }}
+                    />
+                    {!item.is_active && (
+                      <div className="absolute inset-0 bg-black/60 rounded-xl flex items-center justify-center">
+                        <span className="text-white text-xs font-bold">Habis</span>
+                      </div>
+                    )}
+                  </div>
 
                   {/* Info */}
-                  <div className="flex-1">
-                    <h3 className="text-lg font-bold text-white mb-1">{item.name}</h3>
-                    <p className="text-sm text-slate-400 mb-2">{item.description}</p>
-                    <div className="flex items-center gap-4">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start gap-2 mb-1">
+                      <h3 className="text-lg font-bold text-white flex-1">{item.name}</h3>
+                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                        item.category === 'FOOD' ? 'bg-orange-500/20 text-orange-400' :
+                        item.category === 'DRINK' ? 'bg-blue-500/20 text-blue-400' :
+                        item.category === 'BEVERAGE' ? 'bg-blue-500/20 text-blue-400' :
+                        'bg-purple-500/20 text-purple-400'
+                      }`}>
+                        {item.category}
+                      </span>
+                    </div>
+                    <p className="text-sm text-slate-400 mb-2 line-clamp-2">{item.description || 'Deskripsi tidak tersedia'}</p>
+                    <div className="flex items-center gap-3 flex-wrap">
                       <span className="text-lg font-bold text-white">
                         Rp {parseFloat(item.price).toLocaleString()}
                       </span>
@@ -157,8 +232,13 @@ export default function FoodMenu() {
                         </div>
                       )}
                       {item.free_delivery && (
-                        <span className="text-xs bg-orange-500 text-white px-2 py-1 rounded-full">
-                          Free delivery
+                        <span className="text-xs bg-orange-500 text-white px-2 py-1 rounded-full font-medium">
+                          🚚 Free delivery
+                        </span>
+                      )}
+                      {item.stock > 0 && item.stock < 10 && (
+                        <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full font-medium">
+                          Stok terbatas: {item.stock}
                         </span>
                       )}
                     </div>
@@ -195,7 +275,12 @@ export default function FoodMenu() {
                         type="button"
                         onClick={() => addToCart(item)}
                         aria-label="Add to cart"
-                        className="w-10 h-10 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center"
+                        disabled={!item.is_active}
+                        className={`w-10 h-10 text-white rounded-lg transition-colors flex items-center justify-center ${
+                          item.is_active 
+                            ? 'bg-red-500 hover:bg-red-600' 
+                            : 'bg-slate-600 cursor-not-allowed opacity-50'
+                        }`}
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -208,8 +293,10 @@ export default function FoodMenu() {
             })}
 
             {filteredItems.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-slate-400">Tidak ada menu tersedia</p>
+              <div className="text-center py-16">
+                <div className="text-6xl mb-4">🍽️</div>
+                <h3 className="text-xl font-bold text-white mb-2">Tidak ada menu tersedia</h3>
+                <p className="text-slate-400">Coba filter atau kata kunci pencarian lainnya</p>
               </div>
             )}
           </div>
@@ -235,6 +322,8 @@ export default function FoodMenu() {
           </div>
         </div>
       )}
+      
+      <Footer />
     </div>
   )
 }

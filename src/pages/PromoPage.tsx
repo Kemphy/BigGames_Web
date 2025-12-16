@@ -53,7 +53,7 @@ export default function PromoPage() {
   ]
 
   return (
-    <div className="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
       <div className="container mx-auto px-4 py-16 min-h-[calc(100vh-4rem)]">
         <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 text-center">
           Promo & Diskon
@@ -67,10 +67,10 @@ export default function PromoPage() {
           {promos.map((promo, index) => (
             <div
               key={index}
-              className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:border-purple-500/50 transition-all hover:transform hover:scale-105"
+              className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:border-blue-500/50 transition-all hover:transform hover:scale-105"
             >
               {/* Discount Badge */}
-              <div className="inline-block bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-full text-sm font-bold mb-4">
+              <div className="inline-block bg-gradient-to-r from-blue-600 to-pink-600 text-white px-4 py-2 rounded-full text-sm font-bold mb-4">
                 {promo.discount} OFF
               </div>
 
@@ -81,9 +81,9 @@ export default function PromoPage() {
               <p className="text-gray-300 mb-4">{promo.description}</p>
 
               {/* Promo Code */}
-              <div className="bg-black/30 rounded-lg p-3 mb-4 border border-purple-500/30">
+              <div className="bg-black/30 rounded-lg p-3 mb-4 border border-blue-500/30">
                 <p className="text-xs text-gray-400 mb-1">Kode Promo:</p>
-                <p className="text-xl font-mono font-bold text-purple-400">{promo.code}</p>
+                <p className="text-xl font-mono font-bold text-blue-400">{promo.code}</p>
               </div>
 
               {/* Valid Until */}
@@ -100,7 +100,7 @@ export default function PromoPage() {
                 <ul className="space-y-1">
                   {promo.terms.map((term, idx) => (
                     <li key={idx} className="text-xs text-gray-300 flex items-start gap-2">
-                      <span className="text-purple-400 mt-0.5">•</span>
+                      <span className="text-blue-400 mt-0.5">•</span>
                       <span>{term}</span>
                     </li>
                   ))}
@@ -122,7 +122,7 @@ export default function PromoPage() {
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-black/30 rounded-lg p-4">
-              <div className="text-3xl font-bold text-purple-400 mb-2">+10 pts</div>
+              <div className="text-3xl font-bold text-blue-400 mb-2">+10 pts</div>
               <p className="text-white font-semibold">Setiap booking selesai</p>
             </div>
             <div className="bg-black/30 rounded-lg p-4">

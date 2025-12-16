@@ -7,7 +7,29 @@ type Props = {
 
 export default function ConsoleCard({ room }: Props) {
   const consoleType = room.units?.[0]?.console_type || "PS5_PRO"
-  const imageUrl = room.images?.[0] || `https://images.unsplash.com/photo-1486401899868-0e435ed85128?w=800`
+  
+  // Category-specific default images from assets folder
+  const getDefaultImage = (category: string, roomName: string) => {
+    const name = roomName.toLowerCase()
+    
+    if (category === "VIP") {
+      if (name.includes("vip 1") || name.includes("vip room 1")) return "/src/assets/VIP room 1.png"
+      if (name.includes("vip 2") || name.includes("vip room 2")) return "/src/assets/VIP room 2.png"
+      if (name.includes("vip 3") || name.includes("vip room 3")) return "/src/assets/VIP room 3.png"
+      return "/src/assets/VIP room 1.png" // Default VIP image
+    }
+    
+    if (category === "SIMULATOR") {
+      return "/src/assets/Simulator room.png"
+    }
+    
+    // REGULAR category
+    if (name.includes("regular 1") || name.includes("regular room 1")) return "/src/assets/Reguler room 1.png"
+    if (name.includes("regular 2") || name.includes("regular room 2")) return "/src/assets/Reguler room 2.png"
+    return "/src/assets/Reguler room 1.png" // Default regular image
+  }
+  
+  const imageUrl = room.images?.[0] || getDefaultImage(room.category, room.name)
 
   const formatPrice = (price: string) => {
     return new Intl.NumberFormat("id-ID", {
@@ -24,13 +46,13 @@ export default function ConsoleCard({ room }: Props) {
       case "SIMULATOR":
         return "bg-cyan-500"
       default:
-        return "bg-purple-500"
+        return "bg-blue-500"
     }
   }
 
   return (
     <Link to={`/booking/${room.id}`}>
-      <div className="group cursor-pointer glass-card overflow-hidden hover:border-purple-500 transition-all duration-200">
+      <div className="group cursor-pointer glass-card overflow-hidden hover:border-blue-500 transition-all duration-200">
         {/* Image */}
         <div className="relative h-48 overflow-hidden">
           <img
@@ -38,7 +60,7 @@ export default function ConsoleCard({ room }: Props) {
             alt={room.name}
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
           
           {/* Category Badge */}
           <span className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-semibold ${getCategoryBadgeColor(room.category)}`}>
@@ -91,7 +113,7 @@ export default function ConsoleCard({ room }: Props) {
               </p>
             </div>
             
-            <button aria-label="Lihat detail" className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center group-hover:bg-purple-500 transition-all">
+            <button aria-label="Lihat detail" className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center group-hover:bg-blue-500 transition-all">
               <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>

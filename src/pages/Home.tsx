@@ -2,10 +2,12 @@ import { useState, useEffect, useRef } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import ConsoleCard from "../components/ConsoleCard"
 import Footer from "../components/Footer"
+import Logo from "../components/Logo"
 import { roomService } from "../services/room.service"
 import { aiService, type RecommendedRoom } from "../services/ai.service"
 import { useAuth } from "../context/AuthContext"
 import type { Room } from "../types/api"
+import Toast, { type ToastType } from "../components/Toast"
 
 type Category = "VIP" | "REGULAR" | "SIMULATOR"
 
@@ -29,12 +31,21 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("")
   const [currentSlide, setCurrentSlide] = useState(0)
   const [selectedPromo, setSelectedPromo] = useState<PromoDetail | null>(null)
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+  const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null)
   
   const allRoomsRef = useRef<HTMLDivElement>(null)
   const carouselRef = useRef<HTMLDivElement>(null)
 
+  // Track screen size
   useEffect(() => {
-    loadRooms()
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  useEffect(() => {
+    loadRooms(category)
     loadAiRecommendations()
   }, [category])
 
@@ -42,14 +53,16 @@ export default function Home() {
   useEffect(() => {
     if (aiRecommendations.length === 0) return
     
+    const itemsPerView = isMobile ? 1 : 3
+    const maxSlide = Math.max(0, aiRecommendations.slice(0, 10).length - itemsPerView)
     const interval = setInterval(() => {
       setCurrentSlide((prev) => 
-        prev === aiRecommendations.slice(0, 10).length - 1 ? 0 : prev + 1
+        prev >= maxSlide ? 0 : prev + 1
       )
     }, 5000) // Change slide every 5 seconds
 
     return () => clearInterval(interval)
-  }, [aiRecommendations])
+  }, [aiRecommendations, isMobile])
 
   const loadAiRecommendations = async () => {
     try {
@@ -68,16 +81,27 @@ export default function Home() {
     }
   }
 
-  const loadRooms = async () => {
+  const loadRooms = async (cat?: Category | null) => {
     setLoading(true)
+    console.log('[DEBUG] Loading rooms with category:', cat)
     try {
       const response = await roomService.getRooms({
-        category: category || undefined,
-        pageSize: 50
+        category: cat || undefined
+        // Backend doesn't accept page_size parameter
+      })
+      console.log('[DEBUG] Rooms response:', {
+        category: cat,
+        totalRooms: response.rooms.length,
+        rooms: response.rooms.map(r => ({ id: r.id, name: r.name, category: r.category }))
       })
       setRooms(response.rooms)
-    } catch (error) {
-      console.error("Failed to load rooms:", error)
+    } catch (error: any) {
+      console.error("[ERROR] Failed to load rooms:", {
+        category: cat,
+        error: error,
+        message: error?.message,
+        response: error?.response?.data
+      })
     } finally {
       setLoading(false)
     }
@@ -88,11 +112,15 @@ export default function Home() {
       room.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       room.description.toLowerCase().includes(searchQuery.toLowerCase())
     
-    return matchesSearch
+    const matchesCategory = !category || room.category === category
+    
+    return matchesSearch && matchesCategory
   })
 
   const handleCategoryClick = (cat: Category) => {
-    setCategory(category === cat ? null : cat)
+    const newCategory = category === cat ? null : cat
+    setCategory(newCategory)
+    loadRooms(newCategory)
     allRoomsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
@@ -103,22 +131,22 @@ export default function Home() {
   }
 
   const categories: { value: Category; label: string; icon: string }[] = [
-    { value: "VIP", label: "VIP ROOM", icon: "🛋️" },
-    { value: "REGULAR", label: "REGULAR ROOM", icon: "🎯" },
-    { value: "SIMULATOR", label: "SIMULATOR", icon: "🏎️" },
+    { value: "VIP", label: "VIP ROOM", icon: "🎮" },
+    { value: "REGULAR", label: "REGULAR ROOM", icon: "🕹️" },
+    { value: "SIMULATOR", label: "SIMULATOR", icon: "🏁" },
   ]
 
   return (
     <div className="bg-slate-900">
       {/* Hero Section with Wave */}
-      <div className="relative bg-gradient-to-br from-slate-800 to-slate-900 overflow-hidden py-12">
+      <div className="relative bg-gradient-to-br from-slate-800 to-slate-900 overflow-hidden py-6">
         <div className="absolute inset-0 opacity-20">
           <svg className="absolute bottom-0 w-full" viewBox="0 0 1440 320" preserveAspectRatio="none">
             <path fill="#1e293b" fillOpacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,144C960,149,1056,139,1152,122.7C1248,107,1344,85,1392,74.7L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
           </svg>
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
@@ -128,25 +156,7 @@ export default function Home() {
                 {user?.name || "Guest"}
               </p>
             </div>
-            {user && (
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
-                {user.name.charAt(0).toUpperCase()}
-              </div>
-            )}
-          </div>
-
-          {/* Search Bar */}
-          <div className="relative max-w-2xl mb-8">
-            <input
-              type="text"
-              placeholder="Search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-6 py-4 pl-12 bg-white rounded-2xl shadow-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-slate-800"
-            />
-            <svg className="w-6 h-6 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
+            <Logo className="w-48 h-48 object-contain" variant="circle" />
           </div>
 
           {/* Category Buttons */}
@@ -156,9 +166,9 @@ export default function Home() {
                 key={cat.value}
                 type="button"
                 onClick={() => handleCategoryClick(cat.value)}
-                className={`flex flex-col items-center justify-center p-6 rounded-2xl transition-all ${
+                className={`flex flex-col items-center justify-center p-4 rounded-2xl transition-all ${
                   category === cat.value
-                    ? "bg-purple-600 text-white shadow-lg scale-105"
+                    ? "bg-blue-600 text-white shadow-lg scale-105"
                     : "bg-slate-200 text-slate-800 hover:bg-slate-300"
                 }`}
               >
@@ -168,7 +178,7 @@ export default function Home() {
             ))}
             <Link
               to="/food"
-              className="flex flex-col items-center justify-center p-6 rounded-2xl bg-slate-200 text-slate-800 hover:bg-slate-300 transition-all"
+              className="flex flex-col items-center justify-center p-4 rounded-2xl bg-slate-200 text-slate-800 hover:bg-slate-300 transition-all"
             >
               <div className="text-4xl mb-2">🍔</div>
               <span className="text-sm font-semibold text-center">F&B</span>
@@ -193,12 +203,14 @@ export default function Home() {
               )}
             </div>
           </div>
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-b from-purple-900/20 to-transparent p-6">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-b from-blue-900/20 to-transparent p-6">
             <div 
               ref={carouselRef}
               className="flex transition-transform duration-700 ease-out"
               style={{
-                transform: `translateX(-${currentSlide * 100}%)`,
+                transform: isMobile 
+                  ? `translateX(-${currentSlide * 100}%)` 
+                  : `translateX(-${currentSlide * (100 / 3)}%)`,
               }}
             >
               {aiRecommendations.slice(0, 10).map((rec) => {
@@ -211,26 +223,19 @@ export default function Home() {
                   base_price_per_hour: String(rec.base_price_per_hour),
                   status: 'ACTIVE',
                   created_at: "",
-                  images: rec.image_url ? [rec.image_url] : ["https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=500"],
+                  images: rec.image_url ? [rec.image_url] : [],
                   units: []
                 }
                 return (
                   <div 
                     key={rec.room_id} 
-                    className="w-full flex-shrink-0 px-4"
+                    className="w-full md:w-1/3 flex-shrink-0 px-4"
                   >
                     <div 
                       onClick={() => handleRoomClick(rec.room_id)}
-                      className="max-w-md mx-auto cursor-pointer transform hover:scale-105 transition-transform"
+                      className="cursor-pointer transform hover:scale-105 transition-transform"
                     >
                       <ConsoleCard room={room} />
-                      {rec.avg_rating && (
-                        <div className="mt-3 flex items-center gap-2 px-4">
-                          <span className="text-yellow-400 text-xl">⭐</span>
-                          <span className="text-white font-bold text-lg">{rec.avg_rating.toFixed(1)}</span>
-                          <span className="text-slate-400 text-sm">({rec.review_count} reviews)</span>
-                        </div>
-                      )}
                       <div className="mt-2 px-4">
                         <p className="text-sm text-slate-300 leading-relaxed">{rec.reason}</p>
                       </div>
@@ -243,7 +248,11 @@ export default function Home() {
             {/* Navigation Arrows */}
             <button
               type="button"
-              onClick={() => setCurrentSlide((prev) => (prev === 0 ? aiRecommendations.slice(0, 10).length - 1 : prev - 1))}
+              onClick={() => {
+                const itemsPerView = isMobile ? 1 : 3
+                const maxSlide = Math.max(0, aiRecommendations.slice(0, 10).length - itemsPerView)
+                setCurrentSlide((prev) => (prev === 0 ? maxSlide : prev - 1))
+              }}
               className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/70 backdrop-blur-sm rounded-full flex items-center justify-center text-white transition-colors z-10"
               aria-label="Previous slide"
             >
@@ -253,7 +262,11 @@ export default function Home() {
             </button>
             <button
               type="button"
-              onClick={() => setCurrentSlide((prev) => (prev === aiRecommendations.slice(0, 10).length - 1 ? 0 : prev + 1))}
+              onClick={() => {
+                const itemsPerView = isMobile ? 1 : 3
+                const maxSlide = Math.max(0, aiRecommendations.slice(0, 10).length - itemsPerView)
+                setCurrentSlide((prev) => (prev >= maxSlide ? 0 : prev + 1))
+              }}
               className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/70 backdrop-blur-sm rounded-full flex items-center justify-center text-white transition-colors z-10"
               aria-label="Next slide"
             >
@@ -271,7 +284,7 @@ export default function Home() {
                   onClick={() => setCurrentSlide(index)}
                   className={`w-2 h-2 rounded-full transition-all ${
                     currentSlide === index 
-                      ? 'bg-purple-500 w-8' 
+                      ? 'bg-blue-500 w-8' 
                       : 'bg-white/30 hover:bg-white/50'
                   }`}
                   aria-label={`Go to slide ${index + 1}`}
@@ -323,7 +336,7 @@ export default function Home() {
                 code: "LOYAL30",
                 terms: ["Minimal 3x booking sebelumnya", "Semua kategori room", "Tidak bisa digabung promo lain"]
               })}
-              className="relative bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl p-8 overflow-hidden cursor-pointer transform hover:scale-105 transition-all hover:shadow-2xl hover:shadow-purple-500/50"
+              className="relative bg-gradient-to-r from-blue-500 to-pink-500 rounded-2xl p-8 overflow-hidden cursor-pointer transform hover:scale-105 transition-all hover:shadow-2xl hover:shadow-blue-500/50"
             >
               <div className="relative z-10">
                 <p className="text-white text-sm mb-2">Member setia</p>
@@ -377,11 +390,11 @@ export default function Home() {
             onClick={() => setSelectedPromo(null)}
           >
             <div 
-              className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-8 max-w-md w-full border border-purple-500/30 shadow-2xl transform scale-100 animate-fade-in"
+              className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-8 max-w-md w-full border border-blue-500/30 shadow-2xl transform scale-100 animate-fade-in"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-start justify-between mb-6">
-                <div className="inline-block bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-full text-sm font-bold">
+                <div className="inline-block bg-gradient-to-r from-blue-600 to-pink-600 text-white px-4 py-2 rounded-full text-sm font-bold">
                   {selectedPromo.discount} OFF
                 </div>
                 <button
@@ -399,17 +412,17 @@ export default function Home() {
               <h3 className="text-3xl font-bold text-white mb-4">{selectedPromo.title}</h3>
               <p className="text-gray-300 mb-6">{selectedPromo.description}</p>
 
-              <div className="bg-black/30 rounded-lg p-4 mb-6 border border-purple-500/30">
+              <div className="bg-black/30 rounded-lg p-4 mb-6 border border-blue-500/30">
                 <p className="text-xs text-gray-400 mb-1">Kode Promo:</p>
                 <div className="flex items-center justify-between">
-                  <p className="text-2xl font-mono font-bold text-purple-400">{selectedPromo.code}</p>
+                  <p className="text-2xl font-mono font-bold text-blue-400">{selectedPromo.code}</p>
                   <button
                     type="button"
                     onClick={() => {
                       navigator.clipboard.writeText(selectedPromo.code)
-                      alert("Kode promo berhasil disalin!")
+                      setToast({ message: "Kode promo berhasil disalin!", type: 'success' })
                     }}
-                    className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
                   >
                     Salin
                   </button>
@@ -428,7 +441,7 @@ export default function Home() {
                 <ul className="space-y-2">
                   {selectedPromo.terms.map((term, idx) => (
                     <li key={idx} className="text-sm text-gray-300 flex items-start gap-2">
-                      <span className="text-purple-400 mt-1">✓</span>
+                      <span className="text-blue-400 mt-1">✓</span>
                       <span>{term}</span>
                     </li>
                   ))}
@@ -437,7 +450,7 @@ export default function Home() {
 
               <Link
                 to="/booking"
-                className="mt-6 w-full block text-center bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3 px-6 rounded-lg transition-all"
+                className="mt-6 w-full block text-center bg-gradient-to-r from-blue-600 to-pink-600 hover:from-blue-700 hover:to-pink-700 text-white font-bold py-3 px-6 rounded-lg transition-all"
               >
                 Gunakan Sekarang
               </Link>
@@ -449,7 +462,7 @@ export default function Home() {
         <section ref={allRoomsRef}>
         {loading ? (
           <div className="text-center py-20">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
             <p className="mt-4 text-slate-400">Loading rooms...</p>
           </div>
         ) : (
@@ -483,8 +496,8 @@ export default function Home() {
               className="relative h-64 rounded-2xl overflow-hidden group cursor-pointer"
             >
               <img 
-                src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=500" 
-                alt="FAQ 1" 
+                src="/src/assets/Cara booking.png" 
+                alt="Cara Booking" 
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
@@ -496,8 +509,8 @@ export default function Home() {
               className="relative h-64 rounded-2xl overflow-hidden group cursor-pointer"
             >
               <img 
-                src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500" 
-                alt="FAQ 2" 
+                src="/src/assets/Promo dan diskon.png" 
+                alt="Promo & Diskon" 
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
@@ -509,8 +522,8 @@ export default function Home() {
               className="relative h-64 rounded-2xl overflow-hidden group cursor-pointer"
             >
               <img 
-                src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=500" 
-                alt="FAQ 3" 
+                src="/src/assets/Lokasi.png" 
+                alt="Lokasi & Kontak" 
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
@@ -522,6 +535,15 @@ export default function Home() {
       </div>
       
       <Footer />
+      
+      {/* Toast Notifications */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   )
 }

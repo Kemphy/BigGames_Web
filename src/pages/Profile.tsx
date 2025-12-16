@@ -16,6 +16,15 @@ export default function Profile() {
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<string>("ALL")
   const [activeTab, setActiveTab] = useState<"bookings" | "food">("bookings")
+  
+  // Confirmation modal states
+  const [showConfirmModal, setShowConfirmModal] = useState(false)
+  const [confirmAction, setConfirmAction] = useState<{
+    title: string
+    message: string
+    onConfirm: () => void
+    type: 'cancel' | 'delete'
+  } | null>(null)
 
   useEffect(() => {
     if (!user) {
@@ -90,16 +99,51 @@ export default function Profile() {
     navigate("/login")
   }
 
-  const handleCancelBooking = async (id: string) => {
-    if (!confirm("Are you sure you want to cancel this booking?")) return
-    
-    try {
-      await reservationService.cancelReservation(id)
-      loadReservations() // Reload list
-    } catch (err) {
-      alert("Failed to cancel reservation")
-      console.error(err)
+  const showConfirmation = (title: string, message: string, onConfirm: () => void, type: 'cancel' | 'delete') => {
+    setConfirmAction({ title, message, onConfirm, type })
+    setShowConfirmModal(true)
+  }
+
+  const handleConfirm = async () => {
+    if (confirmAction) {
+      await confirmAction.onConfirm()
+      setShowConfirmModal(false)
+      setConfirmAction(null)
     }
+  }
+
+  const handleCancelBooking = async (id: string) => {
+    showConfirmation(
+      'Cancel Booking',
+      'Are you sure you want to cancel this booking?',
+      async () => {
+        try {
+          await reservationService.cancelReservation(id)
+          loadReservations() // Reload list
+        } catch (err) {
+          alert("Failed to cancel reservation")
+          console.error(err)
+        }
+      },
+      'cancel'
+    )
+  }
+
+  const handleCancelFoodOrder = async (id: string) => {
+    showConfirmation(
+      'Cancel Order',
+      'Are you sure you want to cancel this food order?',
+      async () => {
+        try {
+          await foodService.cancelOrder(id)
+          loadFoodOrders() // Reload list
+        } catch (err) {
+          alert("Failed to cancel food order")
+          console.error(err)
+        }
+      },
+      'cancel'
+    )
   }
 
   if (!user) return null
@@ -134,7 +178,7 @@ export default function Profile() {
       <div className="glass-card p-8">
         <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
           {/* Avatar */}
-          <div className="w-24 h-24 rounded-full bg-gradient-to-r from-purple-500 to-cyan-500 flex items-center justify-center text-3xl font-bold">
+          <div className="w-24 h-24 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center text-3xl font-bold">
             {user.name.charAt(0).toUpperCase()}
           </div>
           
@@ -142,7 +186,7 @@ export default function Profile() {
           <div className="flex-1 text-center md:text-left">
             <h1 className="text-3xl font-bold mb-2">{user.name}</h1>
             <p className="text-white/60 mb-1">{user.email}</p>
-            <div className="inline-block px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-sm font-semibold">
+            <div className="inline-block px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-sm font-semibold">
               {user.role}
             </div>
           </div>
@@ -160,7 +204,7 @@ export default function Profile() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="glass-card p-6">
           <p className="text-sm text-white/50 mb-1">Total Bookings</p>
-          <p className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+          <p className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
             {stats.total}
           </p>
         </div>
@@ -176,7 +220,7 @@ export default function Profile() {
           <p className="text-sm text-white/50 mb-1">Reward Points</p>
           <div className="flex items-center gap-2">
             <span className="text-3xl">⭐</span>
-            <p className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+            <p className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
               {stats.points} pts
             </p>
           </div>
@@ -192,7 +236,7 @@ export default function Profile() {
               onClick={() => setActiveTab("bookings")}
               className={`px-6 py-4 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === "bookings"
-                  ? "border-purple-500 text-purple-400"
+                  ? "border-blue-500 text-blue-400"
                   : "border-transparent text-white/60 hover:text-white/80 hover:border-white/20"
               }`}
             >
@@ -202,7 +246,7 @@ export default function Profile() {
               onClick={() => setActiveTab("food")}
               className={`px-6 py-4 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === "food"
-                  ? "border-purple-500 text-purple-400"
+                  ? "border-blue-500 text-blue-400"
                   : "border-transparent text-white/60 hover:text-white/80 hover:border-white/20"
               }`}
             >
@@ -225,7 +269,7 @@ export default function Profile() {
                   onClick={() => setFilter(status)}
                   className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                     filter === status
-                      ? "bg-gradient-to-r from-purple-500 to-cyan-500 text-white"
+                      ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white"
                       : "bg-white/10 text-white/60 hover:bg-white/20"
                   }`}
                 >
@@ -237,7 +281,7 @@ export default function Profile() {
 
         {loading ? (
           <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
             <p className="mt-4 text-white/60">Loading bookings...</p>
           </div>
         ) : reservations.length > 0 ? (
@@ -285,7 +329,7 @@ export default function Profile() {
                         </div>
                         <div>
                           <p className="text-white/50">Total</p>
-                          <p className="font-semibold text-purple-400">
+                          <p className="font-semibold text-blue-400">
                             Rp {parseFloat(reservation.total_amount).toLocaleString()}
                           </p>
                         </div>
@@ -392,7 +436,7 @@ export default function Profile() {
                           </div>
                           <div>
                             <p className="text-white/50">Total</p>
-                            <p className="font-semibold text-purple-400">
+                            <p className="font-semibold text-blue-400">
                               Rp {parseFloat(order.total_amount).toLocaleString()}
                             </p>
                           </div>
@@ -403,6 +447,18 @@ export default function Profile() {
                             <p className="text-sm text-white/50">Notes:</p>
                             <p className="text-sm text-white/80">{order.notes}</p>
                           </div>
+                        )}
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex flex-col gap-2 lg:ml-4">
+                        {order.status === "PENDING" && (
+                          <button
+                            onClick={() => handleCancelFoodOrder(order.id)}
+                            className="px-6 py-2 text-sm rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors whitespace-nowrap"
+                          >
+                            Cancel Order
+                          </button>
                         )}
                       </div>
                     </div>
@@ -425,6 +481,45 @@ export default function Profile() {
         </div>
         )}
       </div>
+
+      {/* Confirmation Modal */}
+      {showConfirmModal && confirmAction && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-900 border border-white/20 rounded-2xl shadow-2xl max-w-md w-full p-6 transform scale-100 animate-fade-in">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-white">
+                {confirmAction.title}
+              </h3>
+            </div>
+            
+            <p className="text-white/80 mb-6">
+              {confirmAction.message}
+            </p>
+            
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowConfirmModal(false)
+                  setConfirmAction(null)
+                }}
+                className="flex-1 px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirm}
+                className={`flex-1 px-4 py-2 rounded-lg transition-colors font-medium ${
+                  confirmAction.type === 'cancel'
+                    ? 'bg-red-500 text-white hover:bg-red-600'
+                    : 'bg-red-600 text-white hover:bg-red-700'
+                }`}
+              >
+                {confirmAction.type === 'cancel' ? 'Yes, Cancel' : 'Yes, Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

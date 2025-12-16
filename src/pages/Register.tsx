@@ -47,7 +47,7 @@ export default function Register() {
             <Logo className="w-20 h-20" />
           </div>
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
               BIG GAMES
             </h1>
             <p className="text-slate-400 mt-2">Buat akun baru</p>
@@ -139,7 +139,7 @@ export default function Register() {
           <div className="text-center">
             <p className="text-sm text-slate-400">
               Sudah punya akun?{" "}
-              <Link to="/login" className="text-purple-400 hover:text-purple-300 font-semibold">
+              <Link to="/login" className="text-blue-400 hover:text-blue-300 font-semibold">
                 Masuk
               </Link>
             </p>

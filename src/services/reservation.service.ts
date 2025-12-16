@@ -25,6 +25,6 @@ export const reservationService = {
   },
 
   async cancelReservation(id: string): Promise<{ message: string }> {
-    return apiClient.put(`/api/reservations/${id}/cancel`, {})
+    return apiClient.post(`/api/reservations/${id}/cancel`, {})
   }
 }

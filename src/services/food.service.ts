@@ -36,9 +36,9 @@ class FoodService {
     return apiClient.get<FoodOrder[]>('/api/fb/orders/me')
   }
 
-  // Cancel order
+  // Cancel order (preserves order history)
   async cancelOrder(orderId: string): Promise<void> {
-    return apiClient.delete(`/api/fb/orders/${orderId}`)
+    return apiClient.post(`/api/fb/orders/${orderId}/cancel`, {})
   }
 
   // Admin: Get all orders
@@ -50,7 +50,7 @@ class FoodService {
 
   // Admin: Update order status
   async updateOrderStatus(orderId: string, status: string): Promise<FoodOrder> {
-    return apiClient.patch<FoodOrder>(`/api/admin/fb/orders/${orderId}/status`, { status })
+    return apiClient.post<FoodOrder>(`/api/admin/fb/orders/${orderId}/status`, { status })
   }
 }
 

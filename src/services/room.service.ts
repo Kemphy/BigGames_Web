@@ -23,7 +23,7 @@ export const roomService = {
     if (params?.maxPrice) queryParams.set('maxPrice', params.maxPrice.toString())
     if (params?.capacity) queryParams.set('capacity', params.capacity.toString())
     if (params?.page) queryParams.set('page', params.page.toString())
-    if (params?.pageSize) queryParams.set('pageSize', params.pageSize.toString())
+    if (params?.pageSize) queryParams.set('page_size', params.pageSize.toString())
 
     const query = queryParams.toString()
     return apiClient.get<RoomsResponse>(`/api/rooms${query ? `?${query}` : ''}`)

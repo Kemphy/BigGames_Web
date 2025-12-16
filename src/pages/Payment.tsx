@@ -104,7 +104,7 @@ export default function Payment() {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
         <p className="ml-4 text-slate-400">Loading payment details...</p>
       </div>
     )
@@ -157,16 +157,16 @@ export default function Payment() {
             
             <div className="bg-white rounded-2xl p-6 text-center space-y-4">
               <div className="flex items-center justify-center gap-2 mb-2">
-                <svg className="w-8 h-8 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
+                <svg className="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M3 3h8v8H3V3m2 2v4h4V5H5m-2 8h8v8H3v-8m2 2v4h4v-4H5m8-12h8v8h-8V3m2 2v4h4V5h-4m0 8h2v2h-2v-2m2 0h2v2h-2v-2m-2 2h2v2h-2v-2m4-2h2v4h-2v-4m0 4h2v2h-2v-2m-4 0h2v2h-2v-2m2-2h2v2h-2v-2m-2 0h2v2h-2v-2z"/>
                 </svg>
                 <h4 className="text-lg font-bold text-gray-800">Scan to Pay</h4>
               </div>
               
               {/* QR Code Placeholder */}
-              <div className="bg-gradient-to-br from-purple-100 to-cyan-100 rounded-xl p-8 mx-auto max-w-[280px] aspect-square flex items-center justify-center">
+              <div className="bg-gradient-to-br from-blue-100 to-cyan-100 rounded-xl p-8 mx-auto max-w-[280px] aspect-square flex items-center justify-center">
                 <div className="text-center">
-                  <svg className="w-40 h-40 text-purple-600 mx-auto mb-2" fill="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-40 h-40 text-blue-600 mx-auto mb-2" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M3 3h8v8H3V3m2 2v4h4V5H5m-2 8h8v8H3v-8m2 2v4h4v-4H5m8-12h8v8h-8V3m2 2v4h4V5h-4m0 8h2v2h-2v-2m2 0h2v2h-2v-2m-2 2h2v2h-2v-2m4-2h2v4h-2v-4m0 4h2v2h-2v-2m-4 0h2v2h-2v-2m2-2h2v2h-2v-2m-2 0h2v2h-2v-2z"/>
                   </svg>
                   <p className="text-sm text-gray-600 font-medium">BIG GAMES</p>
@@ -241,23 +241,12 @@ export default function Payment() {
             )}
 
             <button
-              onClick={handleSubmit}
-              disabled={uploading || !proofUrl.trim()}
+              onClick={proofUrl.trim() ? handleSubmit : handleDemoConfirm}
+              disabled={uploading}
               className="w-full btn-primary disabled:opacity-50"
             >
-              {uploading ? "Uploading..." : "Submit Payment Proof"}
+              {uploading ? "Processing..." : proofUrl.trim() ? "Submit Payment Proof" : "✓ Confirm Payment"}
             </button>
-
-            <div className="text-center">
-              <p className="text-xs text-slate-500 mb-2">Or for demo purposes:</p>
-              <button
-                onClick={handleDemoConfirm}
-                disabled={uploading}
-                className="btn-secondary w-full"
-              >
-                ✓ Confirm Payment (Demo)
-              </button>
-            </div>
           </div>
         </div>
 
@@ -316,7 +305,7 @@ export default function Payment() {
                 
                 <div className="flex justify-between text-xl font-bold text-white">
                   <span>Total</span>
-                  <span className="text-purple-400">
+                  <span className="text-blue-400">
                     Rp {parseFloat(reservation.total_amount).toLocaleString()}
                   </span>
                 </div>

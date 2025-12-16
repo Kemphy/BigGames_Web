@@ -18,7 +18,7 @@ body {
 }
 
 .btn-primary {
-  background: #8b5cf6;
+  background: #2563eb;
   color: white;
   font-weight: 600;
   padding: 0.75rem 1.5rem;
@@ -27,7 +27,7 @@ body {
 }
 
 .btn-primary:hover {
-  background: #7c3aed;
+  background: #1d4ed8;
 }
 
 .btn-secondary {
@@ -61,4 +61,19 @@ body {
   outline: none;
   border-color: #8b5cf6;
   box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.3s ease-out;
 }

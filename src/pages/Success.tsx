@@ -41,7 +41,7 @@ export default function Success() {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     )
   }
@@ -93,7 +93,7 @@ export default function Success() {
 
           {/* Room Info */}
           <div className="text-center pb-6 border-b border-white/10">
-            <div className="inline-block px-4 py-1 rounded-full bg-purple-500/20 text-purple-300 text-sm font-semibold mb-3">
+            <div className="inline-block px-4 py-1 rounded-full bg-blue-500/20 text-blue-300 text-sm font-semibold mb-3">
               {reservation.room?.category || 'N/A'}
             </div>
             <h2 className="text-2xl font-bold mb-2">{reservation.room?.name || 'Room'}</h2>
@@ -152,7 +152,7 @@ export default function Success() {
             
             <div className="flex justify-between text-2xl font-bold">
               <span>Total Paid</span>
-              <span className="bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
                 Rp {parseFloat(reservation.total_amount).toLocaleString()}
               </span>
             </div>
@@ -186,22 +186,6 @@ export default function Success() {
               className="btn-primary"
             >
               Book Again
-            </button>
-          </div>
-        </div>
-
-        {/* Share Section */}
-        <div className="text-center">
-          <p className="text-white/50 text-sm mb-4">Share your experience</p>
-          <div className="flex justify-center gap-3">
-            <button className="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
-              <span className="text-xl">📱</span>
-            </button>
-            <button className="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
-              <span className="text-xl">📧</span>
-            </button>
-            <button className="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
-              <span className="text-xl">💬</span>
             </button>
           </div>
         </div>
