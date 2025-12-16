@@ -1,5 +1,11 @@
 import { Link } from "react-router-dom"
 import type { Room } from "../types/api"
+import vipRoom1 from '../assets/VIP room 1.png'
+import vipRoom2 from '../assets/VIP room 2.png'
+import vipRoom3 from '../assets/VIP room 3.png'
+import simulatorRoom from '../assets/Simulator room.png'
+import regularRoom1 from '../assets/Reguler room 1.png'
+import regularRoom2 from '../assets/Reguler room 2.png'
 
 type Props = {
   room: Room
@@ -13,20 +19,20 @@ export default function ConsoleCard({ room }: Props) {
     const name = roomName.toLowerCase()
     
     if (category === "VIP") {
-      if (name.includes("vip 1") || name.includes("vip room 1")) return "/src/assets/VIP room 1.png"
-      if (name.includes("vip 2") || name.includes("vip room 2")) return "/src/assets/VIP room 2.png"
-      if (name.includes("vip 3") || name.includes("vip room 3")) return "/src/assets/VIP room 3.png"
-      return "/src/assets/VIP room 1.png" // Default VIP image
+      if (name.includes("vip 1") || name.includes("vip room 1")) return vipRoom1
+      if (name.includes("vip 2") || name.includes("vip room 2")) return vipRoom2
+      if (name.includes("vip 3") || name.includes("vip room 3")) return vipRoom3
+      return vipRoom1 // Default VIP image
     }
     
     if (category === "SIMULATOR") {
-      return "/src/assets/Simulator room.png"
+      return simulatorRoom
     }
     
     // REGULAR category
-    if (name.includes("regular 1") || name.includes("regular room 1")) return "/src/assets/Reguler room 1.png"
-    if (name.includes("regular 2") || name.includes("regular room 2")) return "/src/assets/Reguler room 2.png"
-    return "/src/assets/Reguler room 1.png" // Default regular image
+    if (name.includes("regular 1") || name.includes("regular room 1")) return regularRoom1
+    if (name.includes("regular 2") || name.includes("regular room 2")) return regularRoom2
+    return regularRoom1 // Default regular image
   }
   
   const imageUrl = room.images?.[0] || getDefaultImage(room.category, room.name)
@@ -66,15 +72,6 @@ export default function ConsoleCard({ room }: Props) {
           <span className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-semibold ${getCategoryBadgeColor(room.category)}`}>
             {room.category}
           </span>
-
-          {/* Rating */}
-          {room.avg_rating && (
-            <div className="absolute bottom-3 left-3 bg-black/50 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-1">
-              <span className="text-yellow-400">⭐</span>
-              <span className="text-white font-semibold">{room.avg_rating.toFixed(1)}</span>
-              <span className="text-gray-300 text-sm">({room.review_count})</span>
-            </div>
-          )}
         </div>
 
         {/* Content */}

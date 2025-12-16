@@ -7,6 +7,12 @@ import { aiService } from "../services/ai.service"
 import { useAuth } from "../context/AuthContext"
 import Footer from "../components/Footer"
 import type { Room, RoomSlots, TimeSlot } from "../types/api"
+import vipRoom1 from '../assets/VIP room 1.png'
+import vipRoom2 from '../assets/VIP room 2.png'
+import vipRoom3 from '../assets/VIP room 3.png'
+import simulatorRoom from '../assets/Simulator room.png'
+import regularRoom1 from '../assets/Reguler room 1.png'
+import regularRoom2 from '../assets/Reguler room 2.png'
 
 export default function BookingDetail() {
   const { id } = useParams<{ id: string }>()
@@ -192,20 +198,20 @@ export default function BookingDetail() {
     const name = roomName.toLowerCase()
     
     if (category === "VIP") {
-      if (name.includes("vip 1") || name.includes("vip room 1")) return "/src/assets/VIP room 1.png"
-      if (name.includes("vip 2") || name.includes("vip room 2")) return "/src/assets/VIP room 2.png"
-      if (name.includes("vip 3") || name.includes("vip room 3")) return "/src/assets/VIP room 3.png"
-      return "/src/assets/VIP room 1.png"
+      if (name.includes("vip 1") || name.includes("vip room 1")) return vipRoom1
+      if (name.includes("vip 2") || name.includes("vip room 2")) return vipRoom2
+      if (name.includes("vip 3") || name.includes("vip room 3")) return vipRoom3
+      return vipRoom1
     }
     
     if (category === "SIMULATOR") {
-      return "/src/assets/Simulator room.png"
+      return simulatorRoom
     }
     
     // REGULAR category
-    if (name.includes("regular 1") || name.includes("regular room 1")) return "/src/assets/Reguler room 1.png"
-    if (name.includes("regular 2") || name.includes("regular room 2")) return "/src/assets/Reguler room 2.png"
-    return "/src/assets/Reguler room 1.png"
+    if (name.includes("regular 1") || name.includes("regular room 1")) return regularRoom1
+    if (name.includes("regular 2") || name.includes("regular room 2")) return regularRoom2
+    return regularRoom1
   }
 
   const imageUrl = room.images[0] || getDefaultImage(room.category, room.name)

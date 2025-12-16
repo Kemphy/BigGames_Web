@@ -8,6 +8,9 @@ import { aiService, type RecommendedRoom } from "../services/ai.service"
 import { useAuth } from "../context/AuthContext"
 import type { Room } from "../types/api"
 import Toast, { type ToastType } from "../components/Toast"
+import caraBookingImg from '../assets/Cara booking.png'
+import promoImg from '../assets/Promo dan diskon.png'
+import lokasiImg from '../assets/Lokasi.png'
 
 type Category = "VIP" | "REGULAR" | "SIMULATOR"
 
@@ -496,7 +499,7 @@ export default function Home() {
               className="relative h-64 rounded-2xl overflow-hidden group cursor-pointer"
             >
               <img 
-                src="/src/assets/Cara booking.png" 
+                src={caraBookingImg} 
                 alt="Cara Booking" 
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
               />
@@ -509,7 +512,7 @@ export default function Home() {
               className="relative h-64 rounded-2xl overflow-hidden group cursor-pointer"
             >
               <img 
-                src="/src/assets/Promo dan diskon.png" 
+                src={promoImg} 
                 alt="Promo & Diskon" 
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
               />
@@ -522,7 +525,7 @@ export default function Home() {
               className="relative h-64 rounded-2xl overflow-hidden group cursor-pointer"
             >
               <img 
-                src="/src/assets/Lokasi.png" 
+                src={lokasiImg} 
                 alt="Lokasi & Kontak" 
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
               />

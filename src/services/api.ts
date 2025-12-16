@@ -1,4 +1,4 @@
-const BASE_URL = 'https://2d4ae8dc10a3.ngrok-free.app'
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://2d4ae8dc10a3.ngrok-free.app'
 
 class ApiClient {
   private async request<T>(
