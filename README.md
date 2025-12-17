@@ -152,7 +152,7 @@ yarn install
 Buat file `.env` di root directory:
 
 ```env
-VITE_API_BASE_URL=https://2d4ae8dc10a3.ngrok-free.app
+VITE_API_BASE_URL=https://biggames-backend-28c1e4c25e4b.herokuapp.com
 ```
 
 > **Note:** Saat development, Vite akan otomatis menggunakan proxy ke backend API. Lihat `vite.config.js` untuk konfigurasi proxy.
@@ -534,7 +534,7 @@ import VIPRoom1 from "../assets/VIPRoom1.jpg";
 server: {
   proxy: {
     '/api': {
-      target: 'https://2d4ae8dc10a3.ngrok-free.app',
+      target: 'https://biggames-backend-28c1e4c25e4b.herokuapp.com',
       changeOrigin: true,
       secure: false
     }

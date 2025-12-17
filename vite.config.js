@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "https://2d4ae8dc10a3.ngrok-free.app",
+        target: "https://biggames-backend-28c1e4c25e4b.herokuapp.com",
         changeOrigin: true,
         secure: false,
         headers: {
