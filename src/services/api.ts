@@ -1,4 +1,6 @@
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://2d4ae8dc10a3.ngrok-free.app'
+// Use proxy in development, full URL in production
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 
+  (import.meta.env.DEV ? '' : 'https://2d4ae8dc10a3.ngrok-free.app')
 
 class ApiClient {
   private async request<T>(

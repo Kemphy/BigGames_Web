@@ -20,6 +20,7 @@
 - 🎫 Menggunakan kode promo untuk diskon
 - 👤 Mengelola profil dan riwayat booking
 - 👨‍💼 Dashboard admin untuk mengelola reservasi dan pesanan F&B
+- 🔒 Proteksi login - guest hanya bisa browsing, tidak bisa memesan
 
 ## ✨ Fitur Utama
 
@@ -44,10 +45,12 @@
 ### 🍕 Makanan & Minuman
 
 - Menu lengkap dengan 3 kategori (Food, Drink/Beverage, Snack)
-- 21 gambar placeholder yang bervariasi
+- 14 gambar makanan & minuman lokal yang sudah dioptimasi
+- Smart image matching berdasarkan nama item
 - Sistem keranjang dengan manajemen kuantitas
 - Pesan langsung atau terhubung dengan reservasi
 - Pelacakan pesanan secara real-time
+- Proteksi login - harus login untuk menambahkan ke cart
 
 ### 💰 Pembayaran & Promo
 
@@ -109,7 +112,7 @@
 
 ### Manajemen State
 
-- React Context API (AuthContext, BookingContext)
+- React Context API (AuthContext)
 - Custom hooks untuk logika yang dapat digunakan kembali
 
 ### Integrasi API
@@ -149,9 +152,10 @@ yarn install
 Buat file `.env` di root directory:
 
 ```env
-VITE_API_BASE_URL=https://backend-api-anda.com
-VITE_APP_NAME=BigGames
+VITE_API_BASE_URL=https://2d4ae8dc10a3.ngrok-free.app
 ```
+
+> **Note:** Saat development, Vite akan otomatis menggunakan proxy ke backend API. Lihat `vite.config.js` untuk konfigurasi proxy.
 
 ### 4. Setup Backend API
 
@@ -226,6 +230,25 @@ Pastikan gambar sudah ada di `src/assets/`:
 - `Promo dan diskon.png`
 - `Lokasi.png`
 
+**Makanan & Minuman:**
+
+- `ayamgeprek.jpg`
+- `burgerbeef.jpg`
+- `chickenwings.jpg`
+- `frenchfries.jpg`
+- `spaghetticarbonara.jpg`
+- `coklat.jpg`
+- `esteh.jpg`
+- `esjurukkeprok.jpg`
+- `jusmangga.jpg`
+- `lemonade.jpg`
+- `lemonteacincau.jpg`
+- `kentanggoring.jpg`
+- `lumpiakuah.jpg`
+- `nasigoreng.jpg`
+
+> Lihat `ASSETS_MAPPING.md` untuk detail pemetaan gambar.
+
 ## 🏃‍♂️ Menjalankan Proyek
 
 ### Mode Development
@@ -288,14 +311,12 @@ biggames-web/
 │   │   ├── RequireAdmin.tsx     # Pengaman rute admin
 │   │   └── Toast.tsx            # Notifikasi toast
 │   ├── context/                 # React Context
-│   │   ├── AuthContext.tsx      # State autentikasi
-│   │   └── BookingContext.tsx   # State booking
+│   │   └── AuthContext.tsx      # State autentikasi
 │   ├── layouts/                 # Komponen layout
 │   │   ├── AdminLayout.tsx      # Layout dashboard admin
 │   │   └── MainLayout.tsx       # Layout aplikasi utama
 │   ├── pages/                   # Komponen halaman
 │   │   ├── Admin.tsx            # Dashboard admin
-│   │   ├── Booking.tsx          # Daftar booking
 │   │   ├── BookingDetail.tsx    # Halaman booking ruangan
 │   │   ├── BookingGuide.tsx     # Panduan booking
 │   │   ├── FoodCheckout.tsx     # Checkout F&B
@@ -314,8 +335,6 @@ biggames-web/
 │   │   ├── ai.service.ts        # Rekomendasi AI
 │   │   ├── api.ts               # API client dasar
 │   │   ├── auth.service.ts      # Autentikasi
-│   │   ├── bookings.ts          # Bookings (deprecated)
-│   │   ├── consoles.ts          # Consoles (deprecated)
 │   │   ├── food.service.ts      # API F&B
 │   │   ├── payment.service.ts   # API pembayaran
 │   │   ├── promo.service.ts     # API promo
@@ -323,7 +342,6 @@ biggames-web/
 │   │   └── room.service.ts      # API ruangan
 │   ├── types/                   # Tipe TypeScript
 │   │   ├── api.ts               # Tipe API
-│   │   ├── booking.ts           # Tipe booking
 │   │   └── food.ts              # Tipe F&B
 │   ├── App.tsx                  # Komponen aplikasi utama
 │   ├── index.css                # Style global
@@ -336,10 +354,58 @@ biggames-web/
 ├── README.md
 ├── tailwind.config.cjs
 ├── tsconfig.json
-└── vite.config.js
+├── vercel.json                  # Konfigurasi Vercel
+├── vite.config.js
+├── ASSETS_MAPPING.md            # Dokumentasi pemetaan asset
+└── DEPLOYMENT.md                # Panduan deployment
 ```
 
+## 🚀 Deployment ke Vercel
+
+### Persiapan
+
+1. Push kode ke GitHub repository
+2. Login ke [Vercel](https://vercel.com)
+3. Import project dari GitHub
+4. Konfigurasi environment variables di Vercel Dashboard:
+   - `VITE_API_BASE_URL` = URL backend API Anda
+
+### Auto Deploy
+
+Setiap push ke branch `main` akan otomatis trigger deployment baru.
+
+### Manual Deploy
+
+```bash
+npm run build
+# Upload folder dist/ ke Vercel
+```
+
+### Post-Deployment
+
+1. Update CORS settings di backend untuk include domain Vercel Anda
+2. Test semua fitur di production
+3. Monitor di Vercel Dashboard
+
+> Lihat `DEPLOYMENT.md` untuk panduan lengkap.
+
 ## 🎯 Implementasi Fitur Utama
+
+### Proteksi Login
+
+Fitur ordering (cart & checkout) hanya tersedia setelah login:
+
+```typescript
+const { user } = useAuth();
+
+const addToCart = (item: MenuItem) => {
+  if (!user) {
+    navigate('/login', { state: { from: '/food' } });
+    return;
+  }
+  // Logic tambah ke cart
+};
+```
 
 ### Sistem Notifikasi Toast
 
@@ -390,19 +456,22 @@ Semua tombol aksi menggunakan modal konfirmasi:
 
 ### Pemetaan Gambar
 
-Gambar ruangan otomatis dipetakan berdasarkan nama:
+Gambar menggunakan ES module imports untuk production compatibility:
 
 ```typescript
-const getDefaultImage = (category: string, roomName: string) => {
-  const name = roomName.toLowerCase();
-  if (category === "VIP") {
-    if (name.includes("vip 1")) return "/src/assets/VIP room 1.png";
-    if (name.includes("vip 2")) return "/src/assets/VIP room 2.png";
-    if (name.includes("vip 3")) return "/src/assets/VIP room 3.png";
-  }
-  // ... dst
+import VIPRoom1 from '../assets/VIPRoom1.jpg';
+import BurgerBeef from '../assets/burgerbeef.jpg';
+
+const getPlaceholderImage = (item: MenuItem) => {
+  const name = item.name.toLowerCase();
+  // Smart matching berdasarkan nama item
+  if (name.includes('burger')) return BurgerBeef;
+  if (name.includes('ayam') || name.includes('geprek')) return AyamGeprek;
+  // ... fallback ke kategori
 };
 ```
+
+> Semua images di-import sebagai ES modules untuk bundle optimization.
 
 ## 🎨 Palet Warna
 
@@ -441,21 +510,39 @@ const getDefaultImage = (category: string, roomName: string) => {
 
 ## 🐛 Masalah yang Diketahui & Solusi
 
-### Resolusi Modul TypeScript untuk Gambar dengan Spasi
+### Images Tidak Muncul di Production
 
-**Masalah:** Cannot find module '../assets/VIP room 1.png'
+**Masalah:** Absolute paths `/src/assets/` tidak bekerja setelah build
 
-**Solusi:** Gunakan path langsung tanpa import:
+**Solusi:** Gunakan ES module imports:
 
 ```typescript
-// ❌ Jangan
-import VIPRoom1 from "../assets/VIP room 1.png";
+// ✅ Import as ES module
+import VIPRoom1 from '../assets/VIPRoom1.jpg';
 
-// ✅ Gunakan
-const imageUrl = "/src/assets/VIP room 1.png";
+// ✅ Gunakan dalam JSX
+<img src={VIPRoom1} alt="VIP Room" />
 ```
 
-### CORS Error saat Update Reservasi
+### CORS Error di Development
+
+**Masalah:** CORS policy blocking API requests
+
+**Solusi:** Vite proxy configuration sudah disetup di `vite.config.js`:
+
+```javascript
+server: {
+  proxy: {
+    '/api': {
+      target: 'https://2d4ae8dc10a3.ngrok-free.app',
+      changeOrigin: true,
+      secure: false
+    }
+  }
+}
+```
+
+### CORS Error di Production
 
 **Masalah:** Kebijakan CORS memblokir request PUT
 

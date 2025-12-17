@@ -8,9 +8,9 @@ import { aiService, type RecommendedRoom } from "../services/ai.service"
 import { useAuth } from "../context/AuthContext"
 import type { Room } from "../types/api"
 import Toast, { type ToastType } from "../components/Toast"
-import caraBookingImg from '../assets/Cara booking.png'
-import promoImg from '../assets/Promo dan diskon.png'
-import lokasiImg from '../assets/Lokasi.png'
+import caraBookingImg from '../assets/CaraBooking.jpg'
+import promoImg from '../assets/PromoDanDiskon.jpg'
+import lokasiImg from '../assets/Lokasi.jpg'
 
 type Category = "VIP" | "REGULAR" | "SIMULATOR"
 

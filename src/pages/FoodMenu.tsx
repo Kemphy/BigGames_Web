@@ -1,11 +1,29 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { foodService } from "../services/food.service"
+import { useAuth } from "../context/AuthContext"
 import Footer from "../components/Footer"
 import type { MenuItem, CartItem } from "../types/food"
 
+// Import local food images
+import ayamGeprek from '../assets/AyamGeprek.jpg'
+import burgerBeef from '../assets/BurgerBeef.jpg'
+import chickenWings from '../assets/ChickenWings.jpg'
+import cocaCola from '../assets/CocaCola.jpg'
+import esJeruk from '../assets/EsJeruk.jpg'
+import esTeh from '../assets/EsTeh.jpg'
+import frenchFries from '../assets/FrenchFries.jpg'
+import kopiSusu from '../assets/KopiSusu.jpg'
+import mieGoreng from '../assets/MieGoreng.jpg'
+import mineralWater from '../assets/MineralWater.jpg'
+import nachos from '../assets/Nachos.jpg'
+import nasiGoreng from '../assets/NasiGoreng.jpg'
+import popcorn from '../assets/Popcorn.jpg'
+import potatoWedges from '../assets/PotatoWedges.jpg'
+
 export default function FoodMenu() {
   const navigate = useNavigate()
+  const { user } = useAuth()
   const [menuItems, setMenuItems] = useState<MenuItem[]>([])
   const [loading, setLoading] = useState(true)
   const [cart, setCart] = useState<CartItem[]>([])
@@ -36,6 +54,12 @@ export default function FoodMenu() {
   )
 
   const addToCart = (item: MenuItem) => {
+    // Require login to add to cart
+    if (!user) {
+      navigate('/login', { state: { from: '/food' } })
+      return
+    }
+    
     const existingItem = cart.find(i => i.menu_item.id === item.id)
     if (existingItem) {
       setCart(cart.map(i => 
@@ -70,50 +94,44 @@ export default function FoodMenu() {
   )
 
   const handleCheckout = () => {
+    if (!user) {
+      navigate('/login', { state: { from: '/food' } })
+      return
+    }
     if (cart.length === 0) return
     navigate("/food/checkout", { state: { cart } })
   }
 
-  // Get varied placeholder images - different for each item
+  // Get local images based on item name
   const getPlaceholderImage = (item: MenuItem, index: number) => {
-    // Food category images
-    const foodImages = [
-      "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&h=300&fit=crop", // Burger
-      "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300&h=300&fit=crop", // Pizza
-      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&h=300&fit=crop", // Salad
-      "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=300&h=300&fit=crop", // Pancakes
-      "https://images.unsplash.com/photo-1606787366850-de6330128bfc?w=300&h=300&fit=crop", // Ramen
-      "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=300&h=300&fit=crop", // Pasta
-      "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=300&h=300&fit=crop", // Steak
-      "https://images.unsplash.com/photo-1562967914-608f82629710?w=300&h=300&fit=crop", // Sushi
-    ]
+    const itemName = item.name.toLowerCase()
     
-    // Drink/Beverage category images
-    const drinkImages = [
-      "https://images.unsplash.com/photo-1544145945-f90425340c7e?w=300&h=300&fit=crop", // Coffee
-      "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300&h=300&fit=crop", // Iced Coffee
-      "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=300&h=300&fit=crop", // Juice
-      "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=300&h=300&fit=crop", // Smoothie
-      "https://images.unsplash.com/photo-1610889556528-9a770e32642f?w=300&h=300&fit=crop", // Milk Tea
-      "https://images.unsplash.com/photo-1576098359692-63a1e8dc5e2d?w=300&h=300&fit=crop", // Iced Tea
-      "https://images.unsplash.com/photo-1582053433976-25c00369fc93?w=300&h=300&fit=crop", // Frappe
-    ]
+    // Match by item name first
+    if (itemName.includes('ayam geprek') || itemName.includes('geprek')) return ayamGeprek
+    if (itemName.includes('burger')) return burgerBeef
+    if (itemName.includes('chicken wings') || itemName.includes('sayap ayam')) return chickenWings
+    if (itemName.includes('coca cola') || itemName.includes('coke')) return cocaCola
+    if (itemName.includes('es jeruk') || itemName.includes('jeruk peras')) return esJeruk
+    if (itemName.includes('es teh') || itemName.includes('teh manis')) return esTeh
+    if (itemName.includes('french fries') || itemName.includes('kentang goreng')) return frenchFries
+    if (itemName.includes('kopi susu') || itemName.includes('coffee')) return kopiSusu
+    if (itemName.includes('mie goreng')) return mieGoreng
+    if (itemName.includes('mineral water') || itemName.includes('air mineral')) return mineralWater
+    if (itemName.includes('nachos')) return nachos
+    if (itemName.includes('nasi goreng')) return nasiGoreng
+    if (itemName.includes('popcorn')) return popcorn
+    if (itemName.includes('potato wedges') || itemName.includes('wedges')) return potatoWedges
     
-    // Snack category images
-    const snackImages = [
-      "https://images.unsplash.com/photo-1599490659213-e2b9527bd087?w=300&h=300&fit=crop", // Fries
-      "https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=300&h=300&fit=crop", // Chicken Wings
-      "https://images.unsplash.com/photo-1562967916-ca8817ee80c0?w=300&h=300&fit=crop", // Nachos
-      "https://images.unsplash.com/photo-1560717845-968823efbee1?w=300&h=300&fit=crop", // Popcorn
-      "https://images.unsplash.com/photo-1613588555091-97ba5d0c7df2?w=300&h=300&fit=crop", // Onion Rings
-      "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=300&h=300&fit=crop", // Sandwich
-    ]
-    
+    // Fallback by category
     if (item.category === "FOOD") {
+      const foodImages = [burgerBeef, ayamGeprek, nasiGoreng, mieGoreng]
       return foodImages[index % foodImages.length]
     } else if (item.category === "DRINK" || item.category === "BEVERAGE") {
+      const drinkImages = [esTeh, esJeruk, kopiSusu, cocaCola, mineralWater]
       return drinkImages[index % drinkImages.length]
     } else {
+      // SNACK category
+      const snackImages = [frenchFries, chickenWings, nachos, popcorn, potatoWedges]
       return snackImages[index % snackImages.length]
     }
   }
@@ -268,6 +286,7 @@ export default function FoodMenu() {
                         onClick={() => addToCart(item)}
                         aria-label="Add to cart"
                         disabled={!item.is_active}
+                        title={!user ? "Login to add to cart" : ""}
                         className={`w-10 h-10 text-white rounded-lg transition-colors flex items-center justify-center ${
                           item.is_active 
                             ? 'bg-red-500 hover:bg-red-600' 
@@ -307,7 +326,7 @@ export default function FoodMenu() {
                 onClick={handleCheckout}
                 className="bg-red-500 text-white px-8 py-3 rounded-xl font-bold hover:bg-red-600 transition-colors flex items-center gap-3"
               >
-                <span>Checkout</span>
+                <span>{!user ? "Login to Checkout" : "Checkout"}</span>
                 <span>Rp {getTotalPrice().toLocaleString()}</span>
               </button>
             </div>

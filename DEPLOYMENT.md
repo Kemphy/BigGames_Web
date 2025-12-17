@@ -114,6 +114,7 @@ git push origin main
 ```
 
 **Vercel akan otomatis:**
+
 - Detect perubahan baru
 - Build aplikasi
 - Deploy ke production
@@ -156,10 +157,12 @@ vercel env add     # Tambah env var baru
 ### 🔍 Cek Status Deployment
 
 **Via Dashboard:**
+
 - Vercel Dashboard → Your Project → **Deployments**
 - Lihat status: Building → Ready/Error
 
 **Via CLI:**
+
 ```bash
 vercel ls          # List semua deployments
 vercel inspect     # Detail deployment terakhir
@@ -168,12 +171,14 @@ vercel inspect     # Detail deployment terakhir
 ### ⚡ Tips Update Cepat
 
 1. **Preview dulu sebelum production:**
+
    ```bash
    git push origin feature-branch  # Push ke branch lain
    # Vercel akan buat preview URL otomatis
    ```
 
 2. **Rollback jika ada masalah:**
+
    - Dashboard → Deployments → Pilih deployment lama
    - Klik **"Promote to Production"**
 
@@ -218,6 +223,60 @@ app.add_middleware(
 ```
 
 ## 🛠️ Troubleshooting
+
+### ❌ CORS Error: Failed to Fetch / Network Error
+
+**Gejala:**
+
+- Console error: `Access-Control-Allow-Origin header is present`
+- Error: `Failed to fetch` atau `net::ERR_FAILED`
+- Data rooms dan menu F&B tidak muncul
+- Gambar tidak ter-load
+
+**Penyebab:** Backend API tidak mengizinkan request dari domain frontend Anda.
+
+**Solusi untuk Development (localhost):**
+
+✅ **Sudah diperbaiki!** Aplikasi sekarang menggunakan Vite proxy untuk development:
+
+- `vite.config.js` sudah dikonfigurasi proxy ke backend
+- Request dari localhost akan di-forward ke backend
+- Tidak ada CORS error di development
+
+**Solusi untuk Production (Vercel):**
+
+Backend perlu allow CORS dari domain Vercel Anda:
+
+```python
+# Backend FastAPI - Update CORS settings
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "https://your-app.vercel.app",     # Domain Vercel Anda
+        "https://*.vercel.app",             # Atau allow semua Vercel domains
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+```
+
+**Cara Update Backend:**
+
+1. Edit file backend yang ada CORS middleware
+2. Tambahkan domain Vercel Anda ke `allow_origins`
+3. Restart backend server
+4. Test lagi aplikasi
+
+**Alternatif: Allow All Origins (Only for Testing)**
+
+```python
+allow_origins=["*"]  # ⚠️ HANYA untuk testing, JANGAN di production!
+```
 
 ### ❌ Images Tidak Muncul di Production
 
@@ -297,6 +356,7 @@ vercel ls
 Aplikasi Anda akan live di: `https://your-app-name.vercel.app`
 
 **Update aplikasi semudah:**
+
 1. Edit kode
 2. `git push origin main`
 3. Tunggu 1-2 menit

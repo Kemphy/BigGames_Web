@@ -7,12 +7,12 @@ import { aiService } from "../services/ai.service"
 import { useAuth } from "../context/AuthContext"
 import Footer from "../components/Footer"
 import type { Room, RoomSlots, TimeSlot } from "../types/api"
-import vipRoom1 from '../assets/VIP room 1.png'
-import vipRoom2 from '../assets/VIP room 2.png'
-import vipRoom3 from '../assets/VIP room 3.png'
-import simulatorRoom from '../assets/Simulator room.png'
-import regularRoom1 from '../assets/Reguler room 1.png'
-import regularRoom2 from '../assets/Reguler room 2.png'
+import vipRoom1 from '../assets/VIPRoom1.jpg'
+import vipRoom2 from '../assets/VIPRoom2.jpg'
+import vipRoom3 from '../assets/VIPRoom3.jpg'
+import simulatorRoom from '../assets/SimulatorRoom.jpg'
+import regularRoom1 from '../assets/RegulerRoom1.jpg'
+import regularRoom2 from '../assets/RegulerRoom2.jpg'
 
 export default function BookingDetail() {
   const { id } = useParams<{ id: string }>()
