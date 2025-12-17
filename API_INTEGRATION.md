@@ -2,7 +2,7 @@
 
 ## 🎯 Summary
 
-Frontend sudah terintegrasi dengan backend API di `https://2d4ae8dc10a3.ngrok-free.app`
+Frontend sudah terintegrasi dengan backend API di `https://biggames-backend-28c1e4c25e4b.herokuapp.com`
 
 ## 📁 File Structure Baru
 
@@ -104,7 +104,7 @@ const reservation = await reservationService.createReservation({
 Base URL sudah diset di `src/services/api.ts`:
 
 ```typescript
-const BASE_URL = "https://2d4ae8dc10a3.ngrok-free.app";
+const BASE_URL = "https://biggames-backend-28c1e4c25e4b.herokuapp.com";
 ```
 
 Headers otomatis include:
@@ -144,7 +144,7 @@ Cek apakah backend ngrok URL masih aktif. Update `BASE_URL` di `src/services/api
 
 ## 📚 Documentation
 
-Full API documentation: https://2d4ae8dc10a3.ngrok-free.app/docs
+Full API documentation: https://biggames-backend-28c1e4c25e4b.herokuapp.com/docs
 
 ---
 

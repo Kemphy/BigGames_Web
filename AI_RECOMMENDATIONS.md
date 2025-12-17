@@ -6,13 +6,13 @@ Aplikasi sekarang terintegrasi dengan sistem AI Recommendations dari backend yan
 
 ## Backend URL
 
-**Current Ngrok Tunnel:**
+**Production Backend (Heroku):**
 
 ```
-https://2d4ae8dc10a3.ngrok-free.app
+https://biggames-backend-28c1e4c25e4b.herokuapp.com
 ```
 
-> ⚠️ **Important**: URL ngrok akan berubah setiap kali backend restart. Update URL di `src/services/api.ts`
+> ✅ Backend sudah di-deploy di Heroku dengan URL permanent
 
 ## Implemented Features
 
@@ -261,7 +261,7 @@ aiService
 console.log("[AI] Recommendations:", recommendations);
 
 // Manually test endpoint
-fetch("https://2d4ae8dc10a3.ngrok-free.app/api/ai/recommendations", {
+fetch("https://biggames-backend-28c1e4c25e4b.herokuapp.com/api/ai/recommendations", {
   headers: { Authorization: `Bearer ${token}` },
 });
 ```
@@ -398,6 +398,6 @@ if (process.env.NODE_ENV === "development") {
 
 ---
 
-**Last Updated**: December 15, 2025
-**Backend API**: https://2d4ae8dc10a3.ngrok-free.app
+**Last Updated**: December 17, 2025
+**Backend API**: https://biggames-backend-28c1e4c25e4b.herokuapp.com
 **Version**: 1.0.0

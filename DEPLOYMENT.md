@@ -68,7 +68,7 @@ vercel
    Di bagian **"Environment Variables"**, tambahkan:
 
    ```
-   VITE_API_BASE_URL = https://2d4ae8dc10a3.ngrok-free.app
+   VITE_API_BASE_URL = https://biggames-backend-28c1e4c25e4b.herokuapp.com
    ```
 
    ⚠️ **Penting:** Ganti URL ngrok dengan backend production URL yang permanen!
@@ -198,7 +198,7 @@ vercel inspect     # Detail deployment terakhir
 
 ### Backend API:
 
-- ⚠️ URL ngrok (`https://2d4ae8dc10a3.ngrok-free.app`) akan berubah setiap restart
+- ✅ Backend sudah di-deploy di Heroku: `https://biggames-backend-28c1e4c25e4b.herokuapp.com`
 - 💡 Untuk production, gunakan backend yang sudah di-deploy ke server permanen
 - 🔧 Update `VITE_API_BASE_URL` di Vercel dashboard jika backend URL berubah
 
