@@ -400,7 +400,7 @@ const { user } = useAuth();
 
 const addToCart = (item: MenuItem) => {
   if (!user) {
-    navigate('/login', { state: { from: '/food' } });
+    navigate("/login", { state: { from: "/food" } });
     return;
   }
   // Logic tambah ke cart
@@ -459,14 +459,14 @@ Semua tombol aksi menggunakan modal konfirmasi:
 Gambar menggunakan ES module imports untuk production compatibility:
 
 ```typescript
-import VIPRoom1 from '../assets/VIPRoom1.jpg';
-import BurgerBeef from '../assets/burgerbeef.jpg';
+import VIPRoom1 from "../assets/VIPRoom1.jpg";
+import BurgerBeef from "../assets/burgerbeef.jpg";
 
 const getPlaceholderImage = (item: MenuItem) => {
   const name = item.name.toLowerCase();
   // Smart matching berdasarkan nama item
-  if (name.includes('burger')) return BurgerBeef;
-  if (name.includes('ayam') || name.includes('geprek')) return AyamGeprek;
+  if (name.includes("burger")) return BurgerBeef;
+  if (name.includes("ayam") || name.includes("geprek")) return AyamGeprek;
   // ... fallback ke kategori
 };
 ```
@@ -518,10 +518,10 @@ const getPlaceholderImage = (item: MenuItem) => {
 
 ```typescript
 // ✅ Import as ES module
-import VIPRoom1 from '../assets/VIPRoom1.jpg';
+import VIPRoom1 from "../assets/VIPRoom1.jpg";
 
 // ✅ Gunakan dalam JSX
-<img src={VIPRoom1} alt="VIP Room" />
+<img src={VIPRoom1} alt="VIP Room" />;
 ```
 
 ### CORS Error di Development
