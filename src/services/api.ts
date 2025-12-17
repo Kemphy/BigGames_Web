@@ -1,6 +1,6 @@
 // Use proxy in development, full URL in production
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || 
-  (import.meta.env.DEV ? '' : 'https://2d4ae8dc10a3.ngrok-free.app')
+  (import.meta.env.DEV ? '' : 'https://biggames-backend-28c1e4c25e4b.herokuapp.com')
 
 class ApiClient {
   private async request<T>(
